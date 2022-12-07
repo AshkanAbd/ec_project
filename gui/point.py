@@ -7,3 +7,6 @@ class Point:
         self.x = x
         self.y = y
         self.z = z
+
+    def __str__(self) -> str:
+        return str(self.x) + '-' + str(self.y)

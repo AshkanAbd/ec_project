@@ -10,21 +10,29 @@ from gui.point import Point
 
 
 class MatplotDrawer2D(Drawer, ABC):
-    figure: None
+    _figure: None
+    _plot: None
+    _points = {}
 
     def __init__(self, figsize: typing.Tuple[int, int], pltsize: typing.Tuple[int, int]):
         plt.ion()
-        self.figure = plt.figure(figsize=figsize)
-        plt.plot(pltsize[0], pltsize[1])
+        self._figure = plt.figure(figsize=figsize)
+        self._plot = plt.plot(pltsize[0], pltsize[1])
 
     def draw_point(self, p: Point):
-        plt.scatter([p.x, p.y])
-        self.figure.canvas.draw()
-        self.figure.canvas.flush_events()
+        self._points[p.__str__()] = plt.scatter(p.x, p.y)
+        self._figure.canvas.draw()
+        self._figure.canvas.flush_events()
 
-    def remove_point(self, p: Point):
-        self.figure.canvas.draw()
-        self.figure.canvas.flush_events()
+    def remove_point(self, p: Point) -> bool:
+        if p.__str__() not in self._points:
+            return False
+
+        self._points[p.__str__()].remove()
+        del self._points[p.__str__()]
+        self._figure.canvas.draw()
+        self._figure.canvas.flush_events()
+        return True
 
     def flush(self):
         pass
