@@ -4,16 +4,17 @@ from gui.drawer import Drawer
 from gui.point import Point
 
 
-class MatplotDrawer2D(Drawer):
+class MatplotDrawer3D(Drawer):
     _points = {}
 
-    def __init__(self, figsize: typing.Tuple[int, int], pltsize: typing.Tuple[int, int]):
+    def __init__(self, figsize: typing.Tuple[int, int], pltsize: typing.Tuple[int, int, int]):
         plt.ion()
         self._figure = plt.figure(figsize=figsize)
-        plt.plot(pltsize[0], pltsize[1])
+        self.ax = self._figure.add_subplot(111, projection='3d')
+        plt.plot(pltsize[0], pltsize[1], pltsize[2])
 
     def draw_point(self, p: Point):
-        self._points[p.__str__()] = plt.scatter(p.x, p.y, c=p.color)
+        self._points[p.__str__()] = self.ax.scatter(p.x, p.y, p.z, c=p.color)
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
 
