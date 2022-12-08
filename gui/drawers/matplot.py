@@ -31,6 +31,23 @@ class MatplotDrawer2D(Drawer):
         pass
 
 
+class MatplotDrawer1D(MatplotDrawer2D):
+    _points = {}
+
+    def __init__(self, figsize: typing.Tuple[int, int], pltsize: typing.Tuple[int]):
+        plt.ion()
+        self._figure = plt.figure(figsize=figsize)
+        plt.plot(pltsize[0], 1)
+        plt.xlim(-2, pltsize[0] + 2)
+        plt.ylim(0, 0)
+        plt.hlines(0, 0, pltsize[0], colors=[[0, 0, 0]])
+
+    def draw_point(self, p: Point):
+        self._points[p.__str__()] = plt.scatter(p.x, 0, c=p.color)
+        self._figure.canvas.draw()
+        self._figure.canvas.flush_events()
+
+
 class MatplotDrawer3D(Drawer):
     _points = {}
 
