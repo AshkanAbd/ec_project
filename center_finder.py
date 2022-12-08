@@ -1,5 +1,6 @@
 import typing
 import common
+from genetic.genetics import AbstractGeneticAlgorithm
 from gui.drawer import Drawer
 from gui.drawers.matplot import get_drawer_params
 from gui.point import Point
@@ -9,15 +10,18 @@ import logging
 
 class CenterFinder:
     _drawer: Drawer
-    current_points: typing.List[Point] = []
+    _genetic: AbstractGeneticAlgorithm
 
-    def __init__(self, in_stream: InputStream):
+    def __init__(self, in_stream: InputStream, genetic: AbstractGeneticAlgorithm):
         self._in_stream = in_stream
         logging.info("Reading inputs...")
         self._in_stream.load()
-        self.current_points = common.arr_to_point(self._in_stream.get_points(), [[1, 0, 0]])
 
         self.init_drawer()
+        current_points = common.arr_to_point(self._in_stream.get_points(), [[1, 0, 0]])
+
+        self._genetic = genetic
+        self._genetic.phenotype_to_genotype(current_points)
         logging.info("CenterFinder initialized.")
 
     def init_drawer(self):
@@ -30,6 +34,7 @@ class CenterFinder:
 
     def draw_current_points(self):
         logging.info("Drawing current points...")
-        for p in self.current_points:
+        current_points = self._genetic.genotype_to_phenotype()
+        for p in current_points:
             self._drawer.draw_point(p)
-        logging.info("%s points were drawn", len(self.current_points))
+        logging.info("%s points were drawn", len(current_points))

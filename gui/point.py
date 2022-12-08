@@ -1,3 +1,6 @@
+import typing
+
+
 class Point:
     def __init__(self, x, y: float = None, z: float = None, color=None) -> None:
         self.y = None
@@ -24,5 +27,27 @@ class Point:
 
         if self.z is not None:
             res += '-' + str(self.z)
+
+        return res
+
+    def get_dimension(self) -> int:
+        dimension = 1
+
+        if self.y is not None:
+            dimension += 1
+
+        if self.z is not None:
+            dimension += 1
+
+        return dimension
+
+    def to_arr(self) -> typing.List[float]:
+        res = [self.x]
+
+        if self.y is not None:
+            res.append(self.y)
+
+        if self.z is not None:
+            res.append(self.z)
 
         return res

@@ -13,6 +13,10 @@ def get_drawer(dimension: int) -> typing.Type[typing.Union[MatplotDrawer1D, Matp
     return DRAWERS[dimension]
 
 
+def point_to_arr(points: typing.List[Point]) -> typing.List[typing.List[float]]:
+    return [p.to_arr() for p in points]
+
+
 def arr_to_point(arr: typing.List[typing.List[float]], color) -> typing.List[Point]:
     return [Point(i, color=color) for i in arr]
 
