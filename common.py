@@ -1,5 +1,6 @@
 import typing
 from gui.drawers.matplot import MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D
+from gui.point import Point
 
 DRAWERS = {
     1: MatplotDrawer1D,
@@ -10,6 +11,10 @@ DRAWERS = {
 
 def get_drawer(dimension: int) -> typing.Type[typing.Union[MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D]]:
     return DRAWERS[dimension]
+
+
+def arr_to_point(arr: typing.List[typing.List[float]], color) -> typing.List[Point]:
+    return [Point(i, color=color) for i in arr]
 
 
 def find_min(arr: typing.List[typing.List[float]], index: int) -> float:

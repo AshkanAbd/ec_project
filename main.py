@@ -1,3 +1,13 @@
-from gui.matplot.matplot_drawer2d import MatplotDrawer2D
+import logging
+import time
+from center_finder import CenterFinder
+from gui.drawers.matplot import MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D
+import input.input_source
+from gui.point import Point
 
-drawer = MatplotDrawer2D((10, 8), (50, 50))
+logging.getLogger().setLevel(logging.INFO)
+in_source = input.input_source.TxtFileInput("./sample.txt")
+finder = CenterFinder(in_source)
+finder.draw_current_points()
+
+time.sleep(60)
