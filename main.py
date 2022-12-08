@@ -9,6 +9,7 @@ from gui.point import Point
 logging.getLogger().setLevel(logging.INFO)
 in_source = input.input_source.TxtFileInput("./sample.txt")
 finder = CenterFinder(in_source, GeneticAlgorithm())
+finder.draw_target_points()
 finder.draw_current_points()
 
 time.sleep(60)

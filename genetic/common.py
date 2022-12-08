@@ -3,6 +3,7 @@ from gui.point import Point
 import typing
 import math
 
+CHROMOSOME_LENGTH = 0
 GENOME_LEN = []
 LOWER_BOUND = []
 UPPER_BOUND = []
@@ -14,15 +15,16 @@ def is_calibrated() -> bool:
 
 
 def reset():
-    global GENOME_LEN, UPPER_BOUND, LOWER_BOUND, _CALIBRATED
+    global GENOME_LEN, UPPER_BOUND, LOWER_BOUND, _CALIBRATED, CHROMOSOME_LENGTH
     GENOME_LEN = []
     UPPER_BOUND = []
     LOWER_BOUND = []
     _CALIBRATED = False
+    CHROMOSOME_LENGTH = 0
 
 
 def calibrate(points: typing.List[Point]):
-    global _CALIBRATED, UPPER_BOUND, LOWER_BOUND, GENOME_LEN
+    global _CALIBRATED, UPPER_BOUND, LOWER_BOUND, GENOME_LEN, CHROMOSOME_LENGTH
     reset()
     points_arr = point_to_arr(points)
     dimension = points[0].get_dimension()
@@ -33,11 +35,9 @@ def calibrate(points: typing.List[Point]):
         u_bound += u_bound / 10 * 2
         LOWER_BOUND.append(l_bound)
         UPPER_BOUND.append(u_bound)
-        GENOME_LEN.append(
-            math.ceil(
-                math.log2(u_bound - l_bound + 1)
-            )
-        )
+        g_len = math.ceil(math.log2(u_bound - l_bound + 1))
+        GENOME_LEN.append(g_len)
+        CHROMOSOME_LENGTH += g_len
 
     _CALIBRATED = True
 
@@ -57,7 +57,7 @@ def set_lower_bound(v: typing.List[float]):
     LOWER_BOUND = v
 
 
-def chromosome_to_point(ch: str) -> Point:
+def chromosome_to_point(ch: str, color=None) -> Point:
     dimension = len(GENOME_LEN)
     s_index = 0
     res = []
@@ -69,7 +69,7 @@ def chromosome_to_point(ch: str) -> Point:
             LOWER_BOUND[i] + (num / ((2 ** GENOME_LEN[i]) - 1) * (UPPER_BOUND[i] - LOWER_BOUND[i]))
         )
 
-    return Point(res)
+    return Point(res, color=color)
 
 
 def point_to_chromosome(p: Point) -> str:
@@ -88,12 +88,26 @@ def point_to_chromosome(p: Point) -> str:
     return chromosome
 
 
-def calc_genome(num) -> str:
+def calc_chromosome(num: int) -> str:
     res = ''
-    while num >= 2:
+    while num > 0:
         res += str(int(num % 2))
         num = num // 2
 
-    res += '1'
+    while len(res) != CHROMOSOME_LENGTH:
+        res += '0'
+
+    return res[::-1]
+
+
+def calc_genome(num) -> str:
+    res = ''
+    while num > 2:
+        res += str(int(num % 2))
+        num = num // 2
 
     return res
+
+
+def calc_fitness(ch: str) -> float:
+    pass
