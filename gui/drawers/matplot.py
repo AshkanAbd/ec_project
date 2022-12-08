@@ -1,5 +1,9 @@
+import logging
+
 import matplotlib.pyplot as plt
 import typing
+
+import common
 from gui.drawer import Drawer
 from gui.point import Point
 
@@ -26,6 +30,7 @@ class MatplotDrawer2D(Drawer):
             figsize: typing.Tuple[int, int],
             pltsize: typing.Tuple[typing.Tuple[int, int], typing.Tuple[int, int]]
     ):
+        logging.info("Initializing 2D drawer...")
         plt.ion()
         self._figure = plt.figure(figsize=figsize)
         plt.plot(
@@ -34,18 +39,22 @@ class MatplotDrawer2D(Drawer):
         )
         _set_plot_limits(pltsize[0], plt.xlim)
         _set_plot_limits(pltsize[1], plt.ylim)
+        logging.info("2D drawer initialized")
 
     def draw_point(self, p: Point):
         self._points[p.__str__()] = plt.scatter(p.x, p.y, c=p.color)
+        logging.info("%s was drawn", p.__str__())
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
 
     def remove_point(self, p: Point) -> bool:
         if p.__str__() not in self._points:
+            logging.warning("%s hasn't been drawn yet", p.__str__())
             return False
 
         self._points[p.__str__()].remove()
         del self._points[p.__str__()]
+        logging.info("%s cleared", p.__str__())
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
         return True
@@ -58,6 +67,7 @@ class MatplotDrawer1D(MatplotDrawer2D):
     _points = {}
 
     def __init__(self, figsize: typing.Tuple[int, int], pltsize: typing.Tuple[typing.Tuple[int, int]]):
+        logging.info("Initializing 1D drawer...")
         plt.ion()
         self._figure = plt.figure(figsize=figsize)
         plt.plot(abs(pltsize[0][0] - pltsize[0][1]), 1)
@@ -69,9 +79,11 @@ class MatplotDrawer1D(MatplotDrawer2D):
             max(pltsize[0]) + _PLOT_TOLERANCE,
             colors=[[0.8, 0.8, 0.8, 0.7]],
         )
+        logging.info("1D drawer initialized")
 
     def draw_point(self, p: Point):
         self._points[p.__str__()] = plt.scatter(p.x, 0, c=p.color)
+        logging.info("%s was drawn", p.__str__())
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
 
@@ -84,6 +96,7 @@ class MatplotDrawer3D(Drawer):
             figsize: typing.Tuple[int, int],
             pltsize: typing.Tuple[typing.Tuple[int, int], typing.Tuple[int, int], typing.Tuple[int, int]],
     ):
+        logging.info("Initializing 3D drawer...")
         plt.ion()
         self._figure = plt.figure(figsize=figsize)
         self.ax = self._figure.add_subplot(111, projection='3d')
@@ -95,21 +108,53 @@ class MatplotDrawer3D(Drawer):
         _set_plot_limits(pltsize[0], plt.xlim)
         _set_plot_limits(pltsize[1], plt.ylim)
         _set_plot_limits(pltsize[2], self.ax.set_zlim)
+        logging.info("3D drawer initialized")
 
     def draw_point(self, p: Point):
         self._points[p.__str__()] = self.ax.scatter(p.x, p.y, p.z, c=p.color)
+        logging.info("%s was drawn", p.__str__())
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
 
     def remove_point(self, p: Point) -> bool:
         if p.__str__() not in self._points:
+            logging.warning("%s hasn't been drawn yet", p.__str__())
             return False
 
         self._points[p.__str__()].remove()
         del self._points[p.__str__()]
+        logging.info("%s cleared", p.__str__())
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
         return True
 
     def flush(self):
         pass
+
+
+def drawer_params_builder(points: typing.List[typing.List[float]], dimension: int):
+    return (
+        common.float_to_real(common.find_min(points, dimension)),
+        common.float_to_real(common.find_max(points, dimension)),
+    )
+
+
+def get_drawer_params(points: typing.List[typing.List[float]], dimension: int):
+    if dimension == 1:
+        logging.info("Calculating 1D drawer params...")
+        return (
+            drawer_params_builder(points, 0),
+        )
+    elif dimension == 2:
+        logging.info("Calculating 2D drawer params...")
+        return (
+            drawer_params_builder(points, 0),
+            drawer_params_builder(points, 1),
+        )
+    else:
+        logging.info("Calculating 3D drawer params...")
+        return (
+            drawer_params_builder(points, 0),
+            drawer_params_builder(points, 1),
+            drawer_params_builder(points, 2),
+        )

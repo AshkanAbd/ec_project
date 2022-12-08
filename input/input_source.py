@@ -3,7 +3,11 @@ from abc import abstractmethod
 import typing
 
 
-class InputSource:
+class InputStream:
+    @abstractmethod
+    def load(self):
+        pass
+
     @abstractmethod
     def get_dimension(self) -> int:
         pass
@@ -17,7 +21,7 @@ class InputSource:
         pass
 
 
-class TxtFileInput(InputSource):
+class TxtFileInput(InputStream):
     _dimension = 0
     _point_count = 0
     _points = []

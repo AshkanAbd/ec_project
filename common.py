@@ -1,10 +1,15 @@
 import typing
-import main
 from gui.drawers.matplot import MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D
+
+DRAWERS = {
+    1: MatplotDrawer1D,
+    2: MatplotDrawer2D,
+    3: MatplotDrawer3D
+}
 
 
 def get_drawer(dimension: int) -> typing.Type[typing.Union[MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D]]:
-    return main.DRAWERS[dimension]
+    return DRAWERS[dimension]
 
 
 def find_min(arr: typing.List[typing.List[float]], index: int) -> float:
