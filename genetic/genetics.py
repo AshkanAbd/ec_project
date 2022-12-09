@@ -167,14 +167,16 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
     def run_crossover_op(self):
         new_mid_gen = []
         mid_gen_len = len(self._middle_generation)
-        for i in range(0, mid_gen_len, 2):
+        check_list = [i for i in range(mid_gen_len)]
+        for i in range(mid_gen_len // 2):
+            random.shuffle(check_list)
             if random.random() > config.CROSSOVER_POSSIBILITY:
-                new_mid_gen.append(self._middle_generation[i])
-                new_mid_gen.append(self._middle_generation[i + 1])
+                new_mid_gen.append(self._middle_generation[check_list[0]])
+                new_mid_gen.append(self._middle_generation[check_list[1]])
                 continue
 
             crossover_res = self._crossover_op.run(
-                (self._middle_generation[i], self._middle_generation[i + 1])
+                (self._middle_generation[check_list[0]], self._middle_generation[check_list[1]])
             )
             new_mid_gen.append(crossover_res[0])
             new_mid_gen.append(crossover_res[1])
