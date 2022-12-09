@@ -22,6 +22,18 @@ class AbstractGeneticAlgorithm:
     _mutation_op: mutation.Mutation
     _replacement_op: replacement.Replacement
 
+    def __init__(
+            self,
+            selection_op: selection.Selection,
+            crossover_op: crossover.Crossover,
+            mutation_op: mutation.Mutation,
+            replacement_op: replacement.Replacement,
+    ):
+        self._selection_op = selection_op
+        self._crossover_op = crossover_op
+        self._mutation_op = mutation_op
+        self._replacement_op = replacement_op
+
     def _increase_generation_counter(self):
         self._generation_counter += 1
 
@@ -68,12 +80,15 @@ class AbstractGeneticAlgorithm:
 class GeneticAlgorithm(AbstractGeneticAlgorithm):
     target_points: typing.List[Point] = []
 
-    def __init__(self):
+    def __init__(
+            self,
+            selection_op: selection.Selection,
+            crossover_op: crossover.Crossover,
+            mutation_op: mutation.Mutation,
+            replacement_op: replacement.Replacement,
+    ):
         gcommon.reset()
-        self._crossover_op = crossover.StrNptCrossover(1)
-        self._mutation_op = mutation.StrBitFlippingMutation()
-        self._selection_op = selection.AverageFitnessSelection()
-        self._replacement_op = replacement.AlphaGenerationalReplacement(0.3)
+        super().__init__(selection_op, crossover_op, mutation_op, replacement_op)
 
     def set_target_points(self, points: typing.List[Point]):
         if not gcommon.is_calibrated():

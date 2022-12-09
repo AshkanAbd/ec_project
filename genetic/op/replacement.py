@@ -72,7 +72,7 @@ class AlphaGenerationalReplacement(Replacement):
             transferred.add(mid_gen_best)
             new_gen[random.randrange(0, old_gen_len)] = mid_gen[mid_gen_best]
 
-        logging.info('Replacement was successful, new generation len:', len(new_gen))
+        logging.info('Replacement was successful, new generation len: %s', len(new_gen))
         return new_gen
 
     def _update_preserved(
@@ -88,5 +88,5 @@ class AlphaGenerationalReplacement(Replacement):
                 old_gen_best = i
 
         if self._preserved is None or self._preserved.calc_fitness(self._target_points) < old_gen[old_gen_best]:
-            logging.info('Updating best chromosome to %s.')
             self._preserved = old_gen[old_gen_best]
+            logging.info('Updating best chromosome to %s.', self._preserved)
