@@ -109,5 +109,9 @@ def calc_genome(num) -> str:
     return res
 
 
-def calc_fitness(ch: str) -> float:
-    pass
+def arr_avg(num_arr: typing.Union[typing.List[int], typing.List[float]]) -> float:
+    arr_sum = 0
+    for num in num_arr:
+        arr_sum += num
+
+    return arr_sum / len(num_arr)

@@ -47,5 +47,9 @@ class CenterFinder:
         logging.info("Drawing current points...")
         current_points = self._genetic.genotype_to_phenotype()
         for p in current_points:
+            p.set_color([[0, 1, 0]])
             self._drawer.draw_point(p)
         logging.info("%s current points were drawn", len(current_points))
+
+    def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Point], typing.Tuple[bool, None]]:
+        return self._genetic.check_end_condition()

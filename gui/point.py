@@ -1,3 +1,4 @@
+import math
 import typing
 
 
@@ -51,3 +52,31 @@ class Point:
             res.append(self.z)
 
         return res
+
+    def calc_distance(self, point) -> float:
+        res = 0
+        dimension = self.get_dimension()
+        self_arr = self.to_arr()
+        point_arr = point.to_arr()
+
+        for i in range(dimension):
+            res += (self_arr[i] - point_arr[i]) ** 2
+
+        return math.sqrt(res)
+
+    def calc_distance_from_others(self, points) -> float:
+        res = 0
+        dimension = self.get_dimension()
+        self_arr = self.to_arr()
+
+        for i in range(dimension):
+            tmp = 0
+            for p in points:
+                tmp += (p.to_arr()[i] - self_arr[i]) ** 2
+
+            res += math.sqrt(tmp)
+
+        return res
+
+    def set_color(self, color):
+        self.color = color
