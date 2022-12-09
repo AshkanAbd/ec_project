@@ -94,8 +94,9 @@ class CenterFinder:
     def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Point], typing.Tuple[bool, None]]:
         return self._genetic.check_end_condition()
 
-    def run_cycle(self, draw_middle=True):
-        self.draw_current_points([[0, 1, 0]])
+    def run_cycle(self, draw_middle=True, draw_current=True):
+        if draw_current:
+            self.draw_current_points([[0, 1, 0]])
         self._genetic.run_selection_op()
         if draw_middle:
             self.clear_middle_points()
@@ -113,7 +114,8 @@ class CenterFinder:
         # input('Enter to continue...')
         self._genetic.run_replacement_op()
         # input('Enter to continue...')
-        self.clear_current_points()
+        if draw_current:
+            self.clear_current_points()
         self._genetic.increase_generation_counter()
 
     def get_limit(self) -> int:
