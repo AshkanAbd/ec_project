@@ -89,4 +89,4 @@ class AlphaGenerationalReplacement(Replacement):
 
         if self._preserved is None or self._preserved.calc_fitness(self._target_points) < old_gen[old_gen_best]:
             self._preserved = old_gen[old_gen_best]
-            logging.info('Updating best chromosome to %s.', self._preserved)
+            logging.info('Updating best chromosome to %s.', self._preserved.get_value())

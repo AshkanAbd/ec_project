@@ -44,6 +44,7 @@ class MatplotDrawer2D(Drawer):
     def draw_point(self, p: Point):
         self._points[p.__str__()] = plt.scatter(p.x, p.y, c=p.color)
         logging.info("%s was drawn", p.__str__())
+        common.ui_tick()
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
 
@@ -55,6 +56,7 @@ class MatplotDrawer2D(Drawer):
         self._points[p.__str__()].remove()
         del self._points[p.__str__()]
         logging.info("%s cleared", p.__str__())
+        common.ui_tick()
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
         return True
@@ -84,6 +86,7 @@ class MatplotDrawer1D(MatplotDrawer2D):
     def draw_point(self, p: Point):
         self._points[p.__str__()] = plt.scatter(p.x, 0, c=p.color)
         logging.info("%s was drawn", p.__str__())
+        common.ui_tick()
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
 
@@ -113,6 +116,7 @@ class MatplotDrawer3D(Drawer):
     def draw_point(self, p: Point):
         self._points[p.__str__()] = self.ax.scatter(p.x, p.y, p.z, c=p.color)
         logging.info("%s was drawn", p.__str__())
+        common.ui_tick()
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
 
@@ -124,6 +128,7 @@ class MatplotDrawer3D(Drawer):
         self._points[p.__str__()].remove()
         del self._points[p.__str__()]
         logging.info("%s cleared", p.__str__())
+        common.ui_tick()
         self._figure.canvas.draw()
         self._figure.canvas.flush_events()
         return True

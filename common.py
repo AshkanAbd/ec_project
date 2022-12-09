@@ -1,12 +1,18 @@
 import typing
 from gui.drawers.matplot import MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D
 from gui.point import Point
+import time
 
 DRAWERS = {
     1: MatplotDrawer1D,
     2: MatplotDrawer2D,
     3: MatplotDrawer3D
 }
+UI_TICK_RATE = 0.5
+
+
+def ui_tick():
+    time.sleep(UI_TICK_RATE)
 
 
 def get_drawer(dimension: int) -> typing.Type[typing.Union[MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D]]:

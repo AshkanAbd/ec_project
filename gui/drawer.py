@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
-
 from gui.point import Point
+from abc import abstractmethod
 
 
 class Drawer:
