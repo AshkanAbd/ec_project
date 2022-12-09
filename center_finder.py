@@ -20,7 +20,7 @@ class CenterFinder:
         logging.info('Reading from input stream...')
         self._in_stream = in_stream
         self._in_stream.load()
-        self._target_points = common.arr_to_point(self._in_stream.get_points(), color=[[1, 0, 0]])
+        self._target_points = common.arr_to_point(self._in_stream.get_points())
 
         logging.info('Initializing genetic algorithm...')
         self._genetic = genetic
@@ -39,9 +39,10 @@ class CenterFinder:
             get_drawer_params(self._in_stream.get_points(), self._in_stream.get_dimension())
         )
 
-    def draw_target_points(self):
+    def draw_target_points(self, color=None):
         logging.info("Drawing target points...")
         for p in self._target_points:
+            p.set_color(color)
             self._drawer.draw_point(p)
         logging.info("%s target points were drawn", len(self._target_points))
 
@@ -92,5 +93,31 @@ class CenterFinder:
     def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Point], typing.Tuple[bool, None]]:
         return self._genetic.check_end_condition()
 
-    def find(self):
-        pass
+    def run_cycle(self, draw_middle=True):
+        self.draw_current_points([[0, 1, 0]])
+        self._genetic.run_selection_op()
+        if draw_middle:
+            self.clear_middle_points()
+            self.draw_middle_points([[0, 1, 1]])
+        self._genetic.run_crossover_op()
+        if draw_middle:
+            self.clear_middle_points()
+            self.draw_middle_points([[0.7, 0.7, 0]])
+        self._genetic.run_mutation_op()
+        if draw_middle:
+            self.clear_middle_points()
+            self.draw_middle_points([[0, 0.5, 0.5]])
+        self._genetic.run_replacement_op()
+        self.clear_current_points()
+        self.draw_current_points([[0, 1, 0]])
+        self._genetic.increase_generation_counter()
+
+    def get_limit(self) -> int:
+        return self._genetic.get_generation_counter()
+
+    def get_best(self) -> Point:
+        return self._genetic.get_preserved().to_phenotype()
+
+    def draw_best(self, color=None):
+        best = self.get_best().set_color(color)
+        self._drawer.draw_point(best)

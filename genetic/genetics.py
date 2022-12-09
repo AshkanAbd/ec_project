@@ -21,6 +21,7 @@ class AbstractGeneticAlgorithm:
     _crossover_op: crossover.Crossover
     _mutation_op: mutation.Mutation
     _replacement_op: replacement.Replacement
+    _preserved: chromosome.AbstractChromosome = None
 
     def __init__(
             self,
@@ -34,7 +35,7 @@ class AbstractGeneticAlgorithm:
         self._mutation_op = mutation_op
         self._replacement_op = replacement_op
 
-    def _increase_generation_counter(self):
+    def increase_generation_counter(self):
         self._generation_counter += 1
 
     def get_generation_counter(self) -> int:
@@ -76,9 +77,13 @@ class AbstractGeneticAlgorithm:
     def run_replacement_op(self):
         pass
 
+    def get_preserved(self):
+        return self._preserved
+
 
 class GeneticAlgorithm(AbstractGeneticAlgorithm):
     target_points: typing.List[Point] = []
+    _preserved: chromosome.AbstractChromosome = None
 
     def __init__(
             self,
@@ -192,3 +197,4 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             self._current_generation,
             self._middle_generation
         )
+        self._preserved = self._replacement_op.get_preserved()
