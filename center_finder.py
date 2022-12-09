@@ -102,7 +102,7 @@ class CenterFinder:
         self._genetic.run_crossover_op()
         if draw_middle:
             self.clear_middle_points()
-            self.draw_middle_points([[0.7, 0.7, 0]])
+            self.draw_middle_points([[0.1, 0.7, 0]])
         # input('Enter to continue...')
         self._genetic.run_mutation_op()
         if draw_middle:
