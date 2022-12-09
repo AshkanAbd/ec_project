@@ -42,6 +42,10 @@ class MatplotDrawer2D(Drawer):
         logging.info("2D drawer initialized")
 
     def draw_point(self, p: Point):
+        if p.__str__() in self._points:
+            logging.warning("%s was drawn before", p.__str__())
+            return
+
         self._points[p.__str__()] = plt.scatter(p.x, p.y, c=p.color)
         logging.info("%s was drawn", p.__str__())
         common.ui_tick()
@@ -84,6 +88,10 @@ class MatplotDrawer1D(MatplotDrawer2D):
         logging.info("1D drawer initialized")
 
     def draw_point(self, p: Point):
+        if p.__str__() in self._points:
+            logging.warning("%s was drawn before", p.__str__())
+            return
+
         self._points[p.__str__()] = plt.scatter(p.x, 0, c=p.color)
         logging.info("%s was drawn", p.__str__())
         common.ui_tick()
@@ -114,6 +122,10 @@ class MatplotDrawer3D(Drawer):
         logging.info("3D drawer initialized")
 
     def draw_point(self, p: Point):
+        if p.__str__() in self._points:
+            logging.warning("%s was drawn before", p.__str__())
+            return
+
         self._points[p.__str__()] = self.ax.scatter(p.x, p.y, p.z, c=p.color)
         logging.info("%s was drawn", p.__str__())
         common.ui_tick()

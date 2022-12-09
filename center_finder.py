@@ -12,6 +12,8 @@ class CenterFinder:
     _drawer: Drawer
     _genetic: AbstractGeneticAlgorithm
     _target_points: typing.List[Point] = []
+    _current_points: typing.List[Point] = []
+    _middle_points: typing.List[Point] = []
 
     def __init__(self, in_stream: InputStream, genetic: AbstractGeneticAlgorithm):
         logging.info('Initializing center finder...')
@@ -44,32 +46,51 @@ class CenterFinder:
         logging.info("%s target points were drawn", len(self._target_points))
 
     def draw_current_points(self, color=None):
+        if self._current_points:
+            logging.warning('Current points has been drawn')
+            return
+
         logging.info("Drawing current points...")
-        current_points = self._genetic.current_generation_to_phenotype()
-        for p in current_points:
+        self._current_points = self._genetic.current_generation_to_phenotype()
+        for p in self._current_points:
             p.set_color(color)
             self._drawer.draw_point(p)
-        logging.info("%s current points were drawn", len(current_points))
+        logging.info("%s current points were drawn", len(self._current_points))
 
     def clear_current_points(self):
+        if not self._current_points:
+            logging.warning("Current points have don't drawn yet")
+            return
+
         logging.info('Clearing current points...')
-        current_points = self._genetic.current_generation_to_phenotype()
-        for p in current_points:
+        for p in self._current_points:
             self._drawer.remove_point(p)
+        self._current_points.clear()
 
     def draw_middle_points(self, color=None):
+        if self._middle_points:
+            logging.warning('Middle points has been drawn')
+            return
+
         logging.info("Drawing middle points...")
-        middle_points = self._genetic.middle_generation_to_phenotype()
-        for p in middle_points:
+        self._middle_points = self._genetic.middle_generation_to_phenotype()
+        for p in self._middle_points:
             p.set_color(color)
             self._drawer.draw_point(p)
-        logging.info("%s middle points were drawn", len(middle_points))
+        logging.info("%s middle points were drawn", len(self._middle_points))
 
     def clear_middle_points(self):
+        if not self._middle_points:
+            logging.warning("Current points have don't drawn yet")
+            return
+
         logging.info('Clearing middle points...')
-        middle_points = self._genetic.middle_generation_to_phenotype()
-        for p in middle_points:
+        for p in self._middle_points:
             self._drawer.remove_point(p)
+        self._middle_points.clear()
 
     def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Point], typing.Tuple[bool, None]]:
         return self._genetic.check_end_condition()
+
+    def find(self):
+        pass

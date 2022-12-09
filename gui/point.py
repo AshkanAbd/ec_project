@@ -29,6 +29,9 @@ class Point:
         if self.z is not None:
             res += '-' + str(self.z)
 
+        if self.color is not None:
+            res += '-' + str(self.color[0][0]) + str(self.color[0][1]) + str(self.color[0][2])
+
         return res
 
     def get_dimension(self) -> int:
