@@ -30,14 +30,14 @@ if config.DRAW_GENERATION_POINTS:
 
 while True:
     print(f'------------------------------ GENERATION {finder.get_limit() + 1} ------------------------------')
-    finder.run_cycle(draw_middle=config.DRAW_MUDDLE_POINTS, draw_current=config.DRAW_GENERATION_POINTS)
-    finder.draw_best([[0, 0, 1]])
+    finder.run_cycle()
     end_flag, res_point = finder.check_end_condition()
     if finder.get_limit() == config.MAX_GENERATION or end_flag:
         print('Algorithm reached to maximum possible generation.')
         finder.clear_current_points()
         break
 
+finder.draw_best([[0, 0, 1]])
 best_point = finder.get_best()
 print('Best point:', best_point.to_arr())
 print('Best point fitness:', finder.get_best_in_genotype().calc_fitness(finder._target_points))

@@ -6,6 +6,7 @@ from gui.drawers.matplot import get_drawer_params
 from gui.point import Point
 from input.input_source import InputStream
 import logging
+import config
 
 
 class CenterFinder:
@@ -94,29 +95,31 @@ class CenterFinder:
     def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Point], typing.Tuple[bool, None]]:
         return self._genetic.check_end_condition()
 
-    def run_cycle(self, draw_middle=True, draw_current=True):
+    def run_cycle(self):
         self._genetic.run_selection_op()
-        if draw_middle:
+        if config.DRAW_MUDDLE_POINTS:
             self.draw_middle_points([[0, 1, 1]])
         # input('Enter to continue...')
         self._genetic.run_crossover_op()
-        if draw_middle:
+        if config.DRAW_MUDDLE_POINTS:
             self.clear_middle_points()
             self.draw_middle_points([[1, 0, 1]])
         # input('Enter to continue...')
         self._genetic.run_mutation_op()
-        if draw_middle:
+        if config.DRAW_MUDDLE_POINTS:
             self.clear_middle_points()
             self.draw_middle_points([[0, 0.5, 0.5]])
         # input('Enter to continue...')
         self._genetic.run_replacement_op()
         # input('Enter to continue...')
-        if draw_current:
+        if config.DRAW_GENERATION_POINTS:
             self.clear_current_points()
             self.draw_current_points([[0, 1, 0]])
-        if draw_middle:
+        if config.DRAW_MUDDLE_POINTS:
             self.clear_middle_points()
         self._genetic.increase_generation_counter()
+        if config.DRAW_BEST_POINT:
+            self.draw_best([[0, 0, 1]])
 
     def get_limit(self) -> int:
         return self._genetic.get_generation_counter()
