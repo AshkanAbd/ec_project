@@ -8,6 +8,7 @@ import typing
 import genetic.chromosome as chromosome
 import genetic.op.crossover as crossover
 import genetic.op.mutation as mutation
+import genetic.op.selection as selection
 import genetic.config as config
 
 
@@ -15,6 +16,7 @@ class AbstractGeneticAlgorithm:
     _current_generation: typing.List[chromosome.AbstractChromosome] = []
     _middle_generation: typing.List[chromosome.AbstractChromosome] = []
     _generation_counter = 0
+    _selection_op: selection.Selection
     _crossover_op: crossover.Crossover
     _mutation_op: mutation.Mutation
 
@@ -64,12 +66,14 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
         gcommon.reset()
         self._crossover_op = crossover.StrNptCrossover(1)
         self._mutation_op = mutation.StrBitFlippingMutation()
+        self._selection_op = selection.AverageFitnessSelection()
 
     def set_target_points(self, points: typing.List[Point]):
         if not gcommon.is_calibrated():
             gcommon.calibrate(points)
 
         self.target_points = points
+        self._selection_op.setup(self.target_points)
 
     def current_generation_to_phenotype(self) -> typing.List[Point]:
         return [ch.to_phenotype() for ch in self._current_generation]
@@ -110,6 +114,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
         return False, None
 
     def run_selection_op(self):
+        self._middle_generation = self._selection_op.run(self._current_generation)
         fitness_arr = [ch.calc_fitness(self.target_points) for ch in self._current_generation]
         fitness_avg = gcommon.arr_avg(fitness_arr)
 

@@ -20,14 +20,20 @@ class StrNptCrossover(Crossover):
         logging.info("Initializing str %s-pt crossover...", n)
         self.n = n
         if n <= 0:
-            logging.error("invalid %s-pt crossover.", n)
-        if n > gcommon.CHROMOSOME_LENGTH - 1:
-            logging.error("chromosome with length %s doesn't support %s-pt crossover.", gcommon.CHROMOSOME_LENGTH, n)
+            logging.error("Invalid %s-pt crossover.", n)
 
     def run(
             self,
             chs: typing.Tuple[chromosome.StrChromosome, chromosome.StrChromosome]
     ) -> typing.Tuple[chromosome.StrChromosome, chromosome.StrChromosome]:
+        if self.n > gcommon.CHROMOSOME_LENGTH - 1:
+            logging.error(
+                "chromosome with length %s doesn't support %s-pt crossover.",
+                gcommon.CHROMOSOME_LENGTH,
+                self.n,
+            )
+            return chs
+
         logging.info('Running %s-pt crossover on (%s, %s)...', self.n, chs[0].get_value(), chs[1].get_value())
         if self.n <= 0:
             return chs
