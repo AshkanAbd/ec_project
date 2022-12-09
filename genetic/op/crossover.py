@@ -41,7 +41,10 @@ class StrNptCrossover(Crossover):
         pts.sort()
         logging.info('Points are: %s', pts)
 
-        res = (chs[0], chs[1])
+        res = (
+            chromosome.StrChromosome(chs[0].get_value()),
+            chromosome.StrChromosome(chs[1].get_value()),
+        )
         for i in pts:
             tmp = res[0].get_value()[:i + 1] + res[1].get_value()[i + 1:]
             res[1].set_value(res[1].get_value()[:i + 1] + res[0].get_value()[i + 1:])

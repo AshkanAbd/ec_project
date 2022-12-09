@@ -7,6 +7,7 @@ import time
 import typing
 import genetic.chromosome as chromosome
 import genetic.op.crossover as crossover
+import genetic.op.mutation as mutation
 import genetic.config as config
 
 
@@ -15,6 +16,7 @@ class AbstractGeneticAlgorithm:
     _middle_generation: typing.List[chromosome.AbstractChromosome] = []
     _generation_counter = 0
     _crossover_op: crossover.Crossover
+    _mutation_op: mutation.Mutation
 
     def _increase_generation_counter(self):
         self._generation_counter += 1
@@ -43,15 +45,15 @@ class AbstractGeneticAlgorithm:
         pass
 
     @abstractmethod
-    def selection_op(self):
+    def run_selection_op(self):
         pass
 
     @abstractmethod
-    def crossover_op(self):
+    def run_crossover_op(self):
         pass
 
     @abstractmethod
-    def mutation_op(self):
+    def run_mutation_op(self):
         pass
 
 
@@ -61,6 +63,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
     def __init__(self):
         gcommon.reset()
         self._crossover_op = crossover.StrNptCrossover(1)
+        self._mutation_op = mutation.StrBitFlippingMutation()
 
     def set_target_points(self, points: typing.List[Point]):
         if not gcommon.is_calibrated():
@@ -106,7 +109,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
         return False, None
 
-    def selection_op(self):
+    def run_selection_op(self):
         fitness_arr = [ch.calc_fitness(self.target_points) for ch in self._current_generation]
         fitness_avg = gcommon.arr_avg(fitness_arr)
 
@@ -128,7 +131,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
                 self._current_generation[random.randrange(0, fitness_arr_len)]
             )
 
-    def crossover_op(self):
+    def run_crossover_op(self):
         new_mid_gen = []
         mid_gen_len = len(self._middle_generation)
         for i in range(0, mid_gen_len, 2):
@@ -145,5 +148,13 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
         self._middle_generation = new_mid_gen
 
-    def mutation_op(self):
-        pass
+    def run_mutation_op(self):
+        new_mid_gen = []
+        for ch in self._middle_generation:
+            if random.random() > config.MUTATION_POSSIBILITY:
+                new_mid_gen.append(ch)
+                continue
+
+            new_mid_gen.append(self._mutation_op.run(ch))
+
+        self._middle_generation = new_mid_gen
