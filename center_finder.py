@@ -119,5 +119,6 @@ class CenterFinder:
         return self._genetic.get_preserved().to_phenotype()
 
     def draw_best(self, color=None):
-        best = self.get_best().set_color(color)
+        best = self.get_best()
+        best.set_color(color)
         self._drawer.draw_point(best)

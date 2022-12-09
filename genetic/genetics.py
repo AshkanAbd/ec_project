@@ -83,7 +83,6 @@ class AbstractGeneticAlgorithm:
 
 class GeneticAlgorithm(AbstractGeneticAlgorithm):
     target_points: typing.List[Point] = []
-    _preserved: chromosome.AbstractChromosome = None
 
     def __init__(
             self,
