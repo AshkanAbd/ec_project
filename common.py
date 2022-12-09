@@ -11,6 +11,26 @@ DRAWERS = {
 }
 
 
+def print_active_config():
+    print('-------------------------------- UI  CONFIG --------------------------------')
+    print('PLOT_TOLERANCE', config.PLOT_TOLERANCE)
+    print('UI_TICK_RATE', config.UI_TICK_RATE)
+    print('DRAW_MUDDLE_POINTS', config.DRAW_MUDDLE_POINTS)
+    print('DRAW_GENERATION_POINTS', config.DRAW_GENERATION_POINTS)
+    print('------------------------------ GENETIC CONFIG ------------------------------')
+    print('CROSSOVER_POSSIBILITY', config.CROSSOVER_POSSIBILITY)
+    print('MUTATION_POSSIBILITY', config.MUTATION_POSSIBILITY)
+    print('INITIAL_POPULATION', config.INITIAL_POPULATION)
+    print('CHROMOSOME_LENGTH', config.CHROMOSOME_LENGTH)
+    print('GENOME_LEN', config.GENOME_LEN)
+    print('LOWER_BOUND', config.LOWER_BOUND)
+    print('UPPER_BOUND', config.UPPER_BOUND)
+    print('TARGET_TOLERANCE', config.TARGET_TOLERANCE)
+    print('MAX_GENERATION', config.MAX_GENERATION)
+    print('ALPHA_REPLACEMENT', config.ALPHA_REPLACEMENT)
+    print('N_PTS_CROSSOVER', config.N_PTS_CROSSOVER)
+
+
 def ui_tick():
     time.sleep(config.UI_TICK_RATE)
 

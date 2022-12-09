@@ -1,5 +1,5 @@
 import logging
-import time
+import common
 from center_finder import CenterFinder
 from genetic.genetics import GeneticAlgorithm
 import input.input_source
@@ -15,18 +15,20 @@ finder = CenterFinder(
     in_source,
     GeneticAlgorithm(
         selection.AverageFitnessSelection(),
-        crossover.StrNptCrossover(10),
+        crossover.StrNptCrossover(config.N_PTS_CROSSOVER),
         mutation.StrBitFlippingMutation(),
-        replacement.AlphaGenerationalReplacement(0.3),
+        replacement.AlphaGenerationalReplacement(config.ALPHA_REPLACEMENT),
     ),
 )
+
+common.print_active_config()
 
 finder.draw_target_points([[1, 0, 0]])
 end_flag, res_point = finder.check_end_condition()
 
 while not end_flag:
     print(f'------------------------------ GENERATION {finder.get_limit() + 1} ------------------------------')
-    finder.run_cycle(draw_middle=False, draw_current=False)
+    finder.run_cycle(draw_middle=config.DRAW_MUDDLE_POINTS, draw_current=config.DRAW_GENERATION_POINTS)
     finder.draw_best([[0, 0, 1]])
     end_flag, res_point = finder.check_end_condition()
     if finder.get_limit() == config.MAX_GENERATION:
