@@ -70,6 +70,8 @@ class MatplotDrawer1D(MatplotDrawer2D):
     _points = {}
 
     def __init__(self, figsize: typing.Tuple[int, int], pltsize: typing.Tuple[typing.Tuple[int, int]]):
+        if config.PLOT_TOLERANCE is None:
+            config.PLOT_TOLERANCE = 10
         logging.info("Initializing 1D drawer...")
         plt.ion()
         self._figure = plt.figure(figsize=figsize)
@@ -102,6 +104,8 @@ class MatplotDrawer3D(Drawer):
             figsize: typing.Tuple[int, int],
             pltsize: typing.Tuple[typing.Tuple[int, int], typing.Tuple[int, int], typing.Tuple[int, int]],
     ):
+        if config.PLOT_TOLERANCE is None:
+            config.PLOT_TOLERANCE = 10
         logging.info("Initializing 3D drawer...")
         plt.ion()
         self._figure = plt.figure(figsize=figsize)
