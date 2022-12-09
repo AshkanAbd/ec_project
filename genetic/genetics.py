@@ -138,26 +138,6 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
     def run_selection_op(self):
         self._middle_generation = self._selection_op.run(self._current_generation)
-        fitness_arr = [ch.calc_fitness(self.target_points) for ch in self._current_generation]
-        fitness_avg = gcommon.arr_avg(fitness_arr)
-
-        self._middle_generation = []
-        fitness_arr_len = len(fitness_arr)
-
-        for i in range(fitness_arr_len):
-            f = fitness_arr[i]
-            target_ch = self._current_generation[i]
-            int_part = f // fitness_avg
-
-            self._middle_generation += [target_ch for _ in range(int(int_part))]
-
-            if random.random() + int_part <= f / fitness_avg:
-                self._middle_generation.append(target_ch)
-
-        if len(self._middle_generation) % 2 != 0:
-            self._middle_generation.append(
-                self._current_generation[random.randrange(0, fitness_arr_len)]
-            )
 
         self._update_preserved(
             self._middle_generation,
