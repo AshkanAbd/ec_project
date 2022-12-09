@@ -83,7 +83,7 @@ class CenterFinder:
 
     def clear_middle_points(self):
         if not self._middle_points:
-            logging.warning("Current points have don't drawn yet")
+            logging.warning("Middle points have don't drawn yet")
             return
 
         logging.info('Clearing middle points...')
@@ -95,11 +95,8 @@ class CenterFinder:
         return self._genetic.check_end_condition()
 
     def run_cycle(self, draw_middle=True, draw_current=True):
-        if draw_current:
-            self.draw_current_points([[0, 1, 0]])
         self._genetic.run_selection_op()
         if draw_middle:
-            self.clear_middle_points()
             self.draw_middle_points([[0, 1, 1]])
         # input('Enter to continue...')
         self._genetic.run_crossover_op()
@@ -116,6 +113,9 @@ class CenterFinder:
         # input('Enter to continue...')
         if draw_current:
             self.clear_current_points()
+            self.draw_current_points([[0, 1, 0]])
+        if draw_middle:
+            self.clear_middle_points()
         self._genetic.increase_generation_counter()
 
     def get_limit(self) -> int:

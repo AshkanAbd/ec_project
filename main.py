@@ -25,6 +25,8 @@ common.print_active_config()
 
 finder.draw_target_points([[1, 0, 0]])
 end_flag, res_point = finder.check_end_condition()
+if config.DRAW_GENERATION_POINTS:
+    finder.draw_current_points([[0, 1, 0]])
 
 while not end_flag:
     print(f'------------------------------ GENERATION {finder.get_limit() + 1} ------------------------------')
