@@ -2,8 +2,8 @@ from abc import abstractmethod
 import genetic.chromosome as chromosome
 import typing
 import random
-import genetic.common as gcommon
 import logging
+import config
 
 
 class Crossover:
@@ -26,10 +26,10 @@ class StrNptCrossover(Crossover):
             self,
             chs: typing.Tuple[chromosome.StrChromosome, chromosome.StrChromosome]
     ) -> typing.Tuple[chromosome.StrChromosome, chromosome.StrChromosome]:
-        if self.n > gcommon.CHROMOSOME_LENGTH - 1:
+        if self.n > config.CHROMOSOME_LENGTH - 1:
             logging.error(
                 "chromosome with length %s doesn't support %s-pt crossover.",
-                gcommon.CHROMOSOME_LENGTH,
+                config.CHROMOSOME_LENGTH,
                 self.n,
             )
             return chs
@@ -39,7 +39,7 @@ class StrNptCrossover(Crossover):
 
         pts = []
         for _ in range(self.n):
-            num = random.randrange(1, gcommon.CHROMOSOME_LENGTH - 1)
+            num = random.randrange(1, config.CHROMOSOME_LENGTH - 1)
             if num not in pts:
                 pts.append(num)
 

@@ -1,8 +1,8 @@
 from abc import abstractmethod
 import random
 import genetic.chromosome as chromosome
-import genetic.common as gcommon
 import logging
+import config
 
 
 class Mutation:
@@ -16,8 +16,8 @@ class StrBitFlippingMutation(Mutation):
         logging.info('StrBitFlippingMutation initialized')
 
     def run(self, ch: chromosome.StrChromosome) -> chromosome.StrChromosome:
-        pos = random.randrange(0, gcommon.CHROMOSOME_LENGTH)
-        logging.info('%s bit will flip', pos)
+        pos = random.randrange(0, config.CHROMOSOME_LENGTH)
+        logging.info('bit %s will flip', pos)
 
         logging.info('Run str bit flipping on: %s', ch.get_value())
         ch_val: str = ch.get_value()

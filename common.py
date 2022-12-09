@@ -2,17 +2,17 @@ import typing
 from gui.drawers.matplot import MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D
 from gui.point import Point
 import time
+import config
 
 DRAWERS = {
     1: MatplotDrawer1D,
     2: MatplotDrawer2D,
     3: MatplotDrawer3D
 }
-UI_TICK_RATE = 0.5
 
 
 def ui_tick():
-    time.sleep(UI_TICK_RATE)
+    time.sleep(config.UI_TICK_RATE)
 
 
 def get_drawer(dimension: int) -> typing.Type[typing.Union[MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D]]:
@@ -23,7 +23,7 @@ def point_to_arr(points: typing.List[Point]) -> typing.List[typing.List[float]]:
     return [p.to_arr() for p in points]
 
 
-def arr_to_point(arr: typing.List[typing.List[float]], color) -> typing.List[Point]:
+def arr_to_point(arr: typing.List[typing.List[float]], color=None) -> typing.List[Point]:
     return [Point(i, color=color) for i in arr]
 
 

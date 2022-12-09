@@ -10,7 +10,7 @@ import genetic.op.crossover as crossover
 import genetic.op.mutation as mutation
 import genetic.op.selection as selection
 import genetic.op.replacement as replacement
-import genetic.config as config
+import config
 import logging
 
 
@@ -92,7 +92,6 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             mutation_op: mutation.Mutation,
             replacement_op: replacement.Replacement,
     ):
-        gcommon.reset()
         super().__init__(selection_op, crossover_op, mutation_op, replacement_op)
 
     def set_target_points(self, points: typing.List[Point]):
@@ -110,15 +109,11 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
         return [ch.to_phenotype() for ch in self._middle_generation]
 
     def generate_initial_population(self):
-        initial_count = math.ceil(1.65 * pow(2, 0.21 * gcommon.CHROMOSOME_LENGTH))
-        if initial_count % 2 != 0:
-            initial_count += 1
-
         random.seed(time.time())
         self._current_generation = []
 
-        for _ in range(initial_count):
-            chromosome_num = random.randrange(0, 2 ** gcommon.CHROMOSOME_LENGTH)
+        for _ in range(config.INITIAL_POPULATION):
+            chromosome_num = random.randrange(0, 2 ** config.CHROMOSOME_LENGTH)
             self._current_generation.append(
                 chromosome.StrChromosome(gcommon.calc_chromosome(chromosome_num))
             )
@@ -132,7 +127,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
                 if res is None:
                     res = target.calc_distance(ch_phenotype)
                 else:
-                    if math.fabs(res - target.calc_distance(ch_phenotype)) > 0.0000001:
+                    if math.fabs(res - target.calc_distance(ch_phenotype)) > config.TARGET_TOLERANCE:
                         flag = False
                         break
 
