@@ -24,13 +24,16 @@ finder.draw_target_points([[1, 0, 0]])
 end_flag, res_point = finder.check_end_condition()
 
 while not end_flag:
-    finder.run_cycle(False)
+    print(f'----------------------------------- GENERATION {finder.get_limit()} -----------------------------------')
+    finder.run_cycle(True)
+    finder.draw_best([[0, 0, 1]])
     end_flag, res_point = finder.check_end_condition()
     if finder.get_limit() == 10:
+        finder.clear_middle_points()
         break
 
-finder.draw_best([[0, 0, 1]])
 best_point = finder.get_best()
 print('Best point:', best_point.to_arr())
+print('Best point fitness:', finder.get_best_in_genotype().calc_fitness(finder._target_points))
 
 time.sleep(60)

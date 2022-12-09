@@ -16,10 +16,10 @@ class StrBitFlippingMutation(Mutation):
         logging.info('StrBitFlippingMutation initialized')
 
     def run(self, ch: chromosome.StrChromosome) -> chromosome.StrChromosome:
-        logging.info('Run str bit flipping on: %s', ch.get_value())
         pos = random.randrange(0, gcommon.CHROMOSOME_LENGTH)
         logging.info('%s bit will flip', pos)
 
+        logging.info('Run str bit flipping on: %s', ch.get_value())
         ch_val: str = ch.get_value()
         if ch_val[pos] == '0':
             ch_val = ch_val[:pos] + '1' + ch_val[pos + 1:]

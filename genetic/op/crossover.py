@@ -34,7 +34,6 @@ class StrNptCrossover(Crossover):
             )
             return chs
 
-        logging.info('Running %s-pt crossover on (%s, %s)...', self.n, chs[0].get_value(), chs[1].get_value())
         if self.n <= 0:
             return chs
 
@@ -47,6 +46,7 @@ class StrNptCrossover(Crossover):
         pts.sort()
         logging.info('Points are: %s', pts)
 
+        logging.info('Running %s-pt crossover on (%s, %s)...', self.n, chs[0].get_value(), chs[1].get_value())
         res = (
             chromosome.StrChromosome(chs[0].get_value()),
             chromosome.StrChromosome(chs[1].get_value()),
@@ -56,5 +56,5 @@ class StrNptCrossover(Crossover):
             res[1].set_value(res[1].get_value()[:i + 1] + res[0].get_value()[i + 1:])
             res[0].set_value(tmp)
 
-        logging.info('Crossover was successful: (%s, %s)', res[0].get_value(), res[1].get_value())
+        logging.info('Crossover was successful: (%s, %s)', res[1].get_value(), res[0].get_value())
         return res

@@ -11,6 +11,7 @@ import genetic.op.mutation as mutation
 import genetic.op.selection as selection
 import genetic.op.replacement as replacement
 import genetic.config as config
+import logging
 
 
 class AbstractGeneticAlgorithm:
@@ -163,6 +164,11 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
                 self._current_generation[random.randrange(0, fitness_arr_len)]
             )
 
+        self._update_preserved(
+            self._middle_generation,
+            [ch.calc_fitness(self.target_points) for ch in self._middle_generation]
+        )
+
     def run_crossover_op(self):
         new_mid_gen = []
         mid_gen_len = len(self._middle_generation)
@@ -179,6 +185,10 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             new_mid_gen.append(crossover_res[1])
 
         self._middle_generation = new_mid_gen
+        self._update_preserved(
+            self._middle_generation,
+            [ch.calc_fitness(self.target_points) for ch in self._middle_generation]
+        )
 
     def run_mutation_op(self):
         new_mid_gen = []
@@ -190,10 +200,33 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             new_mid_gen.append(self._mutation_op.run(ch))
 
         self._middle_generation = new_mid_gen
+        self._update_preserved(
+            self._middle_generation,
+            [ch.calc_fitness(self.target_points) for ch in self._middle_generation]
+        )
 
     def run_replacement_op(self):
         self._current_generation = self._replacement_op.run(
             self._current_generation,
             self._middle_generation
         )
-        self._preserved = self._replacement_op.get_preserved()
+        self._update_preserved(
+            self._middle_generation,
+            [ch.calc_fitness(self.target_points) for ch in self._middle_generation]
+        )
+
+    def _update_preserved(
+            self,
+            gen: typing.List[chromosome.AbstractChromosome],
+            gen_fitness: typing.List[float],
+    ):
+        logging.info('Looking for new best chromosome...')
+        gen_len = len(gen)
+        gen_best = 0
+        for i in range(1, gen_len):
+            if gen_fitness[i] < gen_fitness[gen_best]:
+                gen_best = i
+
+        if self._preserved is None or self._preserved.calc_fitness(self.target_points) > gen_fitness[gen_best]:
+            self._preserved = gen[gen_best]
+            logging.info('Updating best chromosome to %s.', self._preserved.get_value())

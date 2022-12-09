@@ -11,6 +11,7 @@ import logging
 class CenterFinder:
     _drawer: Drawer
     _genetic: AbstractGeneticAlgorithm
+    _best: Point = None
     _target_points: typing.List[Point] = []
     _current_points: typing.List[Point] = []
     _middle_points: typing.List[Point] = []
@@ -99,26 +100,35 @@ class CenterFinder:
         if draw_middle:
             self.clear_middle_points()
             self.draw_middle_points([[0, 1, 1]])
+        # input('Enter to continue...')
         self._genetic.run_crossover_op()
         if draw_middle:
             self.clear_middle_points()
             self.draw_middle_points([[0.7, 0.7, 0]])
+        # input('Enter to continue...')
         self._genetic.run_mutation_op()
         if draw_middle:
             self.clear_middle_points()
             self.draw_middle_points([[0, 0.5, 0.5]])
+        # input('Enter to continue...')
         self._genetic.run_replacement_op()
+        # input('Enter to continue...')
         self.clear_current_points()
-        self.draw_current_points([[0, 1, 0]])
         self._genetic.increase_generation_counter()
 
     def get_limit(self) -> int:
         return self._genetic.get_generation_counter()
 
+    def get_best_in_genotype(self):
+        return self._genetic.get_preserved()
+
     def get_best(self) -> Point:
         return self._genetic.get_preserved().to_phenotype()
 
     def draw_best(self, color=None):
-        best = self.get_best()
-        best.set_color(color)
-        self._drawer.draw_point(best)
+        if self._best is not None:
+            self._drawer.remove_point(self._best)
+
+        self._best = self.get_best()
+        self._best.set_color(color)
+        self._drawer.draw_point(self._best)
