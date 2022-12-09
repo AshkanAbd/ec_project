@@ -9,6 +9,7 @@ import genetic.chromosome as chromosome
 import genetic.op.crossover as crossover
 import genetic.op.mutation as mutation
 import genetic.op.selection as selection
+import genetic.op.replacement as replacement
 import genetic.config as config
 
 
@@ -19,6 +20,7 @@ class AbstractGeneticAlgorithm:
     _selection_op: selection.Selection
     _crossover_op: crossover.Crossover
     _mutation_op: mutation.Mutation
+    _replacement_op: replacement.Replacement
 
     def _increase_generation_counter(self):
         self._generation_counter += 1
@@ -58,6 +60,10 @@ class AbstractGeneticAlgorithm:
     def run_mutation_op(self):
         pass
 
+    @abstractmethod
+    def run_replacement_op(self):
+        pass
+
 
 class GeneticAlgorithm(AbstractGeneticAlgorithm):
     target_points: typing.List[Point] = []
@@ -67,6 +73,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
         self._crossover_op = crossover.StrNptCrossover(1)
         self._mutation_op = mutation.StrBitFlippingMutation()
         self._selection_op = selection.AverageFitnessSelection()
+        self._replacement_op = replacement.AlphaGenerationalReplacement(0.3)
 
     def set_target_points(self, points: typing.List[Point]):
         if not gcommon.is_calibrated():
@@ -74,6 +81,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
         self.target_points = points
         self._selection_op.setup(self.target_points)
+        self._replacement_op.setup(self.target_points)
 
     def current_generation_to_phenotype(self) -> typing.List[Point]:
         return [ch.to_phenotype() for ch in self._current_generation]
@@ -163,3 +171,9 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             new_mid_gen.append(self._mutation_op.run(ch))
 
         self._middle_generation = new_mid_gen
+
+    def run_replacement_op(self):
+        self._current_generation = self._replacement_op.run(
+            self._current_generation,
+            self._middle_generation
+        )
