@@ -47,9 +47,7 @@ class MatplotDrawer2D(Drawer):
 
         self._points[p.__str__()] = plt.scatter(p.x, p.y, c=p.color)
         # logging.info("%s was drawn", p.__str__())
-        common.ui_tick()
-        self._figure.canvas.draw()
-        self._figure.canvas.flush_events()
+        self.flush()
 
     def remove_point(self, p: Point) -> bool:
         if p.__str__() not in self._points:
@@ -59,13 +57,13 @@ class MatplotDrawer2D(Drawer):
         self._points[p.__str__()].remove()
         del self._points[p.__str__()]
         # logging.info("%s cleared", p.__str__())
-        common.ui_tick()
-        self._figure.canvas.draw()
-        self._figure.canvas.flush_events()
+        self.flush()
         return True
 
     def flush(self):
-        pass
+        common.ui_tick()
+        self._figure.canvas.draw()
+        self._figure.canvas.flush_events()
 
 
 class MatplotDrawer1D(MatplotDrawer2D):
@@ -88,14 +86,12 @@ class MatplotDrawer1D(MatplotDrawer2D):
 
     def draw_point(self, p: Point):
         if p.__str__() in self._points:
-            logging.warning("%s was drawn before", p.__str__())
+            # logging.warning("%s was drawn before", p.__str__())
             return
 
         self._points[p.__str__()] = plt.scatter(p.x, 0, c=p.color)
-        logging.info("%s was drawn", p.__str__())
-        common.ui_tick()
-        self._figure.canvas.draw()
-        self._figure.canvas.flush_events()
+        # logging.info("%s was drawn", p.__str__())
+        self.flush()
 
 
 class MatplotDrawer3D(Drawer):
@@ -122,30 +118,28 @@ class MatplotDrawer3D(Drawer):
 
     def draw_point(self, p: Point):
         if p.__str__() in self._points:
-            logging.warning("%s was drawn before", p.__str__())
+            # logging.warning("%s was drawn before", p.__str__())
             return
 
         self._points[p.__str__()] = self.ax.scatter(p.x, p.y, p.z, c=p.color)
-        logging.info("%s was drawn", p.__str__())
-        common.ui_tick()
-        self._figure.canvas.draw()
-        self._figure.canvas.flush_events()
+        # logging.info("%s was drawn", p.__str__())
+        self.flush()
 
     def remove_point(self, p: Point) -> bool:
         if p.__str__() not in self._points:
-            logging.warning("%s hasn't been drawn yet", p.__str__())
+            # logging.warning("%s hasn't been drawn yet", p.__str__())
             return False
 
         self._points[p.__str__()].remove()
         del self._points[p.__str__()]
-        logging.info("%s cleared", p.__str__())
-        common.ui_tick()
-        self._figure.canvas.draw()
-        self._figure.canvas.flush_events()
+        # logging.info("%s cleared", p.__str__())
+        self.flush()
         return True
 
     def flush(self):
-        pass
+        common.ui_tick()
+        self._figure.canvas.draw()
+        self._figure.canvas.flush_events()
 
 
 def drawer_params_builder(points: typing.List[typing.List[float]], dimension: int):
