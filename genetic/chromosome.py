@@ -14,6 +14,9 @@ class AbstractChromosome:
     def get_value(self):
         return self._value
 
+    def set_value(self, value):
+        self._value = value
+
     @abstractmethod
     def to_phenotype(self):
         pass

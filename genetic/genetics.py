@@ -6,11 +6,15 @@ import random
 import time
 import typing
 import genetic.chromosome as chromosome
+import genetic.op.crossover as crossover
+import genetic.config as config
 
 
 class AbstractGeneticAlgorithm:
     _current_generation: typing.List[chromosome.AbstractChromosome] = []
+    _middle_generation: typing.List[chromosome.AbstractChromosome] = []
     _generation_counter = 0
+    _crossover_op: crossover.Crossover
 
     def _increase_generation_counter(self):
         self._generation_counter += 1
@@ -23,7 +27,11 @@ class AbstractGeneticAlgorithm:
         pass
 
     @abstractmethod
-    def genotype_to_phenotype(self) -> typing.List[Point]:
+    def current_generation_to_phenotype(self) -> typing.List[Point]:
+        pass
+
+    @abstractmethod
+    def middle_generation_to_phenotype(self) -> typing.List[Point]:
         pass
 
     @abstractmethod
@@ -52,6 +60,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
     def __init__(self):
         gcommon.reset()
+        self._crossover_op = crossover.StrNptCrossover(1)
 
     def set_target_points(self, points: typing.List[Point]):
         if not gcommon.is_calibrated():
@@ -59,11 +68,17 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
         self.target_points = points
 
-    def genotype_to_phenotype(self) -> typing.List[Point]:
+    def current_generation_to_phenotype(self) -> typing.List[Point]:
         return [ch.to_phenotype() for ch in self._current_generation]
+
+    def middle_generation_to_phenotype(self) -> typing.List[Point]:
+        return [ch.to_phenotype() for ch in self._middle_generation]
 
     def generate_initial_population(self):
         initial_count = math.ceil(1.65 * pow(2, 0.21 * gcommon.CHROMOSOME_LENGTH))
+        if initial_count % 2 != 0:
+            initial_count += 1
+
         random.seed(time.time())
         self._current_generation = []
 
@@ -93,13 +108,42 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
     def selection_op(self):
         fitness_arr = [ch.calc_fitness(self.target_points) for ch in self._current_generation]
+        fitness_avg = gcommon.arr_avg(fitness_arr)
 
-        avg_fitness = gcommon.arr_avg(fitness_arr)
+        self._middle_generation = []
+        fitness_arr_len = len(fitness_arr)
 
-        pass
+        for i in range(fitness_arr_len):
+            f = fitness_arr[i]
+            target_ch = self._current_generation[i]
+            int_part = f // fitness_avg
+
+            self._middle_generation += [target_ch for _ in range(int(int_part))]
+
+            if random.random() + int_part <= f / fitness_avg:
+                self._middle_generation.append(target_ch)
+
+        if len(self._middle_generation) % 2 != 0:
+            self._middle_generation.append(
+                self._current_generation[random.randrange(0, fitness_arr_len)]
+            )
 
     def crossover_op(self):
-        pass
+        new_mid_gen = []
+        mid_gen_len = len(self._middle_generation)
+        for i in range(0, mid_gen_len, 2):
+            if random.random() > config.CROSSOVER_POSSIBILITY:
+                new_mid_gen.append(self._middle_generation[i])
+                new_mid_gen.append(self._middle_generation[i + 1])
+                continue
+
+            crossover_res = self._crossover_op.run(
+                (self._middle_generation[i], self._middle_generation[i + 1])
+            )
+            new_mid_gen.append(crossover_res[0])
+            new_mid_gen.append(crossover_res[1])
+
+        self._middle_generation = new_mid_gen
 
     def mutation_op(self):
         pass
