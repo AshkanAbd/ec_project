@@ -1,7 +1,5 @@
-import math
 from abc import abstractmethod
-import genetic.common as gcommon
-from gui.point import Point
+from genetic.phenotype import Phenotype
 import random
 import time
 import typing
@@ -23,6 +21,7 @@ class AbstractGeneticAlgorithm:
     _mutation_op: mutation.Mutation
     _replacement_op: replacement.Replacement
     _preserved: chromosome.AbstractChromosome = None
+    _targets: typing.List[Phenotype] = []
 
     def __init__(
             self,
@@ -43,15 +42,15 @@ class AbstractGeneticAlgorithm:
         return self._generation_counter
 
     @abstractmethod
-    def set_target_points(self, points: typing.List[Point]):
+    def set_target_points(self, points: typing.List[Phenotype]):
         pass
 
     @abstractmethod
-    def current_generation_to_phenotype(self) -> typing.List[Point]:
+    def current_generation_to_phenotype(self) -> typing.List[Phenotype]:
         pass
 
     @abstractmethod
-    def middle_generation_to_phenotype(self) -> typing.List[Point]:
+    def middle_generation_to_phenotype(self) -> typing.List[Phenotype]:
         pass
 
     @abstractmethod
@@ -59,7 +58,7 @@ class AbstractGeneticAlgorithm:
         pass
 
     @abstractmethod
-    def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Point], typing.Tuple[bool, None]]:
+    def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Phenotype], typing.Tuple[bool, None]]:
         pass
 
     @abstractmethod
@@ -83,8 +82,6 @@ class AbstractGeneticAlgorithm:
 
 
 class GeneticAlgorithm(AbstractGeneticAlgorithm):
-    target_points: typing.List[Point] = []
-
     def __init__(
             self,
             selection_op: selection.Selection,
@@ -94,18 +91,15 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
     ):
         super().__init__(selection_op, crossover_op, mutation_op, replacement_op)
 
-    def set_target_points(self, points: typing.List[Point]):
-        if not gcommon.is_calibrated():
-            gcommon.calibrate(points)
+    def set_target_points(self, points: typing.List[Phenotype]):
+        self._targets = points
+        self._selection_op.setup(self._targets)
+        self._replacement_op.setup(self._targets)
 
-        self.target_points = points
-        self._selection_op.setup(self.target_points)
-        self._replacement_op.setup(self.target_points)
-
-    def current_generation_to_phenotype(self) -> typing.List[Point]:
+    def current_generation_to_phenotype(self) -> typing.List[Phenotype]:
         return [ch.to_phenotype() for ch in self._current_generation]
 
-    def middle_generation_to_phenotype(self) -> typing.List[Point]:
+    def middle_generation_to_phenotype(self) -> typing.List[Phenotype]:
         return [ch.to_phenotype() for ch in self._middle_generation]
 
     def generate_initial_population(self):
@@ -115,25 +109,10 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
         for _ in range(config.INITIAL_POPULATION):
             chromosome_num = random.randrange(0, 2 ** config.CHROMOSOME_LENGTH)
             self._current_generation.append(
-                chromosome.StrChromosome(gcommon.calc_chromosome(chromosome_num))
+                chromosome.StrChromosome(chromosome_num)
             )
 
-    def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Point], typing.Tuple[bool, None]]:
-        for ch in self._current_generation:
-            res = None
-            flag = True
-            ch_phenotype = ch.to_phenotype()
-            for target in self.target_points:
-                if res is None:
-                    res = target.calc_distance(ch_phenotype)
-                else:
-                    if math.fabs(res - target.calc_distance(ch_phenotype)) > config.TARGET_TOLERANCE:
-                        flag = False
-                        break
-
-            if flag:
-                return True, ch_phenotype
-
+    def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Phenotype], typing.Tuple[bool, None]]:
         return False, None
 
     def run_selection_op(self):
@@ -141,7 +120,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
         self._update_preserved(
             self._middle_generation,
-            [ch.calc_fitness(self.target_points) for ch in self._middle_generation]
+            [ch.calc_fitness(self._targets) for ch in self._middle_generation]
         )
 
     def run_crossover_op(self):
@@ -164,7 +143,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
         self._middle_generation = new_mid_gen
         self._update_preserved(
             self._middle_generation,
-            [ch.calc_fitness(self.target_points) for ch in self._middle_generation]
+            [ch.calc_fitness(self._targets) for ch in self._middle_generation]
         )
 
     def run_mutation_op(self):
@@ -179,7 +158,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
         self._middle_generation = new_mid_gen
         self._update_preserved(
             self._middle_generation,
-            [ch.calc_fitness(self.target_points) for ch in self._middle_generation]
+            [ch.calc_fitness(self._targets) for ch in self._middle_generation]
         )
 
     def run_replacement_op(self):
@@ -189,7 +168,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
         )
         self._update_preserved(
             self._middle_generation,
-            [ch.calc_fitness(self.target_points) for ch in self._middle_generation]
+            [ch.calc_fitness(self._targets) for ch in self._middle_generation]
         )
 
     def _update_preserved(
@@ -204,6 +183,6 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             if gen_fitness[i] < gen_fitness[gen_best]:
                 gen_best = i
 
-        if self._preserved is None or self._preserved.calc_fitness(self.target_points) > gen_fitness[gen_best]:
+        if self._preserved is None or self._preserved.calc_fitness(self._targets) > gen_fitness[gen_best]:
             self._preserved = gen[gen_best]
             logging.info('Updating best chromosome to %s.', self._preserved.get_value())

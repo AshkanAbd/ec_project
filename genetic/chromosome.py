@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from genetic.phenotype import Phenotype
 from gui.point import Point
 import typing
 import config
@@ -22,12 +23,23 @@ class AbstractChromosome:
         pass
 
     @abstractmethod
-    def calc_fitness(self, points: typing.List[Point]):
+    def calc_fitness(self, points: typing.List[Phenotype]):
         pass
 
 
 class StrChromosome(AbstractChromosome):
-    def __init__(self, value: str):
+    def __init__(self, value: typing.Union[str, int]):
+        if type(value) == int:
+            res = ''
+            while value > 0:
+                res += str(int(value % 2))
+                value = value // 2
+
+            while len(res) != config.CHROMOSOME_LENGTH:
+                res += '0'
+
+            value = res
+
         super().__init__(value)
 
     def to_phenotype(self):
@@ -46,5 +58,5 @@ class StrChromosome(AbstractChromosome):
 
         return Point(res)
 
-    def calc_fitness(self, points: typing.List[Point]):
+    def calc_fitness(self, points: typing.List[Phenotype]):
         return self.to_phenotype().calc_distance_from_others(points)

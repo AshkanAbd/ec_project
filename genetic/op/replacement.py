@@ -1,17 +1,17 @@
 from abc import abstractmethod
 import random
 import genetic.chromosome as chromosome
-from gui.point import Point
+from genetic.phenotype import Phenotype
 import logging
 import typing
 import math
 
 
 class Replacement:
-    _target_points: typing.List[Point] = []
+    _targets: typing.List[Phenotype] = []
 
-    def setup(self, target_points: typing.List[Point]):
-        self._target_points = target_points
+    def setup(self, target_points: typing.List[Phenotype]):
+        self._targets = target_points
 
     @abstractmethod
     def run(
@@ -43,7 +43,7 @@ class AlphaGenerationalReplacement(Replacement):
         mid_gen_len = len(mid_gen)
 
         logging.info('Calculating fitness for alpha generational replacement...')
-        mid_gen_fitness = [ch.calc_fitness(self._target_points) for ch in mid_gen]
+        mid_gen_fitness = [ch.calc_fitness(self._targets) for ch in mid_gen]
 
         new_gen = [x for x in old_gen]
         transferred = set()

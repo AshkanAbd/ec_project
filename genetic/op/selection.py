@@ -1,21 +1,28 @@
 from abc import abstractmethod
 import random
 import genetic.chromosome as chromosome
-import genetic.common as gcommon
-from gui.point import Point
+from genetic.phenotype import Phenotype
 import logging
 import typing
 
 
 class Selection:
-    _target_points: typing.List[Point] = []
+    _target: typing.List[Phenotype] = []
 
-    def setup(self, target_points: typing.List[Point]):
-        self._target_points = target_points
+    def setup(self, target_points: typing.List[Phenotype]):
+        self._target = target_points
 
     @abstractmethod
     def run(self, chs: typing.List[chromosome.AbstractChromosome]) -> typing.List[chromosome.AbstractChromosome]:
         pass
+
+
+def _calc_arr_avg(num_arr: typing.Union[typing.List[int], typing.List[float]]) -> float:
+    arr_sum = 0
+    for num in num_arr:
+        arr_sum += num
+
+    return arr_sum / len(num_arr)
 
 
 class AverageFitnessSelection(Selection):
@@ -24,8 +31,8 @@ class AverageFitnessSelection(Selection):
 
     def run(self, chs: typing.List[chromosome.AbstractChromosome]) -> typing.List[chromosome.AbstractChromosome]:
         logging.info('Calculating fitness for average fitness selection...')
-        fitness_arr = [ch.calc_fitness(self._target_points) for ch in chs]
-        fitness_avg = gcommon.arr_avg(fitness_arr)
+        fitness_arr = [ch.calc_fitness(self._target) for ch in chs]
+        fitness_avg = _calc_arr_avg(fitness_arr)
 
         new_gen = []
         fitness_arr_len = len(fitness_arr)

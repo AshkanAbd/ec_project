@@ -1,8 +1,9 @@
 import math
 import typing
+from genetic.phenotype import Phenotype
 
 
-class Point:
+class Point(Phenotype):
     def __init__(self, x, y: float = None, z: float = None, color=None) -> None:
         self.y = None
         self.z = None

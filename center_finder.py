@@ -24,6 +24,10 @@ class CenterFinder:
         self._in_stream.load()
         self._target_points = common.arr_to_point(self._in_stream.get_points())
 
+        logging.info('Calibrating genetic configs...')
+        if not common.is_calibrated():
+            common.calibrate(self._target_points)
+
         logging.info('Initializing genetic algorithm...')
         self._genetic = genetic
         self._genetic.set_target_points(self._target_points)
