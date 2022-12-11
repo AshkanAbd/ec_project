@@ -43,10 +43,12 @@ class AlphaGenerationalReplacement(Replacement):
         mid_gen_len = len(mid_gen)
 
         logging.info('Calculating fitness for alpha generational replacement...')
+        old_gen_fitness = [ch.calc_fitness(self._targets) for ch in old_gen]
         mid_gen_fitness = [ch.calc_fitness(self._targets) for ch in mid_gen]
 
         new_gen = [x for x in old_gen]
         transferred = set()
+        updated = [x for x in range(old_gen_len)]
 
         copy_count = math.ceil(mid_gen_len / 1 * self._alpha)
         logging.info('Running alpha generational replacement, alpha values is %s(%s)', copy_count, self._alpha)
@@ -63,7 +65,14 @@ class AlphaGenerationalReplacement(Replacement):
                 break
 
             transferred.add(mid_gen_best)
-            new_gen[random.randrange(0, old_gen_len)] = mid_gen[mid_gen_best]
+            if len(updated) == 0:
+                new_gen.append(mid_gen[mid_gen_best])
+                continue
+            random.shuffle(updated)
+
+            if old_gen_fitness[updated[0]] > mid_gen_fitness[mid_gen_best]:
+                new_gen[updated[0]] = mid_gen[mid_gen_best]
+            updated = updated[1:]
 
         logging.info('Replacement was successful, generation len: %s', len(new_gen))
         return new_gen

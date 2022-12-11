@@ -167,8 +167,8 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             self._middle_generation
         )
         self._update_preserved(
-            self._middle_generation,
-            [ch.calc_fitness(self._targets) for ch in self._middle_generation]
+            self._current_generation,
+            [ch.calc_fitness(self._targets) for ch in self._current_generation]
         )
 
     def _update_preserved(
