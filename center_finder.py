@@ -40,6 +40,9 @@ class CenterFinder:
 
     def init_drawer(self):
         drawer_constructor = common.get_drawer(self._in_stream.get_dimension())
+        if drawer_constructor is None:
+            self._drawer = Drawer()
+            return
         self._drawer = drawer_constructor(
             (10, 8),
             get_drawer_params(self._in_stream.get_points(), self._in_stream.get_dimension())
@@ -119,6 +122,7 @@ class CenterFinder:
         if config.DRAW_GENERATION_POINTS:
             self.clear_current_points()
             self.draw_current_points([[0, 1, 0]])
+        # input('Enter to continue...')
         if config.DRAW_MUDDLE_POINTS:
             self.clear_middle_points()
         self._genetic.increase_generation_counter()

@@ -37,7 +37,9 @@ def ui_tick():
     time.sleep(config.UI_TICK_RATE)
 
 
-def get_drawer(dimension: int) -> typing.Type[typing.Union[MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D]]:
+def get_drawer(dimension: int) -> typing.Type[typing.Union[MatplotDrawer1D, MatplotDrawer2D, MatplotDrawer3D, None]]:
+    if dimension not in DRAWERS:
+        return None
     return DRAWERS[dimension]
 
 

@@ -45,7 +45,7 @@ class MatplotDrawer2D(Drawer):
             # logging.warning("%s was drawn before", p.__str__())
             return
 
-        self._points[p.__str__()] = plt.scatter(p.x, p.y, c=p.color)
+        self._points[p.__str__()] = plt.scatter(p.to_arr()[0], p.to_arr()[1], c=p.color)
         # logging.info("%s was drawn", p.__str__())
         self.flush()
 
@@ -91,7 +91,7 @@ class MatplotDrawer1D(MatplotDrawer2D):
             # logging.warning("%s was drawn before", p.__str__())
             return
 
-        self._points[p.__str__()] = plt.scatter(p.x, 0, c=p.color)
+        self._points[p.__str__()] = plt.scatter(p.to_arr()[0], 0, c=p.color)
         # logging.info("%s was drawn", p.__str__())
         self.flush()
 
@@ -125,7 +125,7 @@ class MatplotDrawer3D(Drawer):
             # logging.warning("%s was drawn before", p.__str__())
             return
 
-        self._points[p.__str__()] = self.ax.scatter(p.x, p.y, p.z, c=p.color)
+        self._points[p.__str__()] = self.ax.scatter(p.to_arr()[0], p.to_arr()[1], p.to_arr()[2], c=p.color)
         # logging.info("%s was drawn", p.__str__())
         self.flush()
 
