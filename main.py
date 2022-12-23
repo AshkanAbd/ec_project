@@ -31,7 +31,7 @@ while True:
     print(f'------------------------------ GENERATION {finder.get_generation() + 1} ------------------------------')
     finder.run_cycle()
     end_flag, res_point = finder.check_end_condition()
-    if finder.get_limit() == config.MAX_LIMIT or end_flag:
+    if finder.get_limit() >= config.MAX_LIMIT or end_flag:
         print('Algorithm reached to maximum possible generation.')
         finder.clear_current_points()
         break

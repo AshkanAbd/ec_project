@@ -47,6 +47,7 @@ class AlphaGenerationalReplacement(Replacement):
         logging.info('Calculating fitness for alpha generational replacement...')
         old_gen_fitness = self._genetic.get_current_gen_fitness()
         mid_gen_fitness = [ch.calc_fitness(self._targets) for ch in mid_gen]
+        self._genetic._fitness_counter += mid_gen_len
 
         new_gen = [x for x in old_gen]
         transferred = set()
