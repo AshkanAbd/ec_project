@@ -16,17 +16,17 @@ class CenterFinder:
     _target_points: typing.List[Point] = []
     _current_points: typing.List[Point] = []
     _middle_points: typing.List[Point] = []
+    _limit_checker = None
 
     def __init__(self, in_stream: InputStream, genetic: AbstractGeneticAlgorithm):
+        self._limit_checker = AbstractGeneticAlgorithm.get_generation_counter
         logging.info('Initializing center finder...')
         logging.info('Reading from input stream...')
         self._in_stream = in_stream
         self._in_stream.load()
         self._target_points = common.arr_to_point(self._in_stream.get_points())
 
-        logging.info('Calibrating genetic configs...')
-        if not common.is_calibrated():
-            common.calibrate(self._target_points)
+        self._calibrate()
 
         logging.info('Initializing genetic algorithm...')
         self._genetic = genetic
@@ -37,6 +37,14 @@ class CenterFinder:
         self.init_drawer()
 
         logging.info("CenterFinder initialized.")
+
+    def _calibrate(self):
+        logging.info('Calibrating genetic configs...')
+        if config.DIMENSION is None or config.DIMENSION == 0:
+            config.DIMENSION = self._in_stream.get_dimension()
+
+        if not common.is_calibrated():
+            common.calibrate(self._target_points)
 
     def init_drawer(self):
         drawer_constructor = common.get_drawer(self._in_stream.get_dimension())
@@ -130,7 +138,13 @@ class CenterFinder:
             self.draw_best([[0, 0, 1]])
 
     def get_limit(self) -> int:
+        return self._limit_checker(self._genetic)
+
+    def get_generation(self) -> int:
         return self._genetic.get_generation_counter()
+
+    def set_limit_checker(self, func):
+        self._limit_checker = func
 
     def get_best_in_genotype(self):
         return self._genetic.get_preserved()

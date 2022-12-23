@@ -6,6 +6,11 @@ import config
 
 
 class Mutation:
+    _genetic = None
+
+    def setup(self, genetic):
+        self._genetic = genetic
+
     @abstractmethod
     def run(self, ch: chromosome.AbstractChromosome) -> chromosome.AbstractChromosome:
         pass

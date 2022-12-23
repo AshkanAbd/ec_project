@@ -2,27 +2,22 @@ from abc import abstractmethod
 import random
 import genetic.chromosome as chromosome
 from genetic.phenotype import Phenotype
+import common
 import logging
 import typing
 
 
 class Selection:
     _target: typing.List[Phenotype] = []
+    _genetic = None
 
-    def setup(self, target_points: typing.List[Phenotype]):
+    def setup(self, target_points: typing.List[Phenotype], genetic):
         self._target = target_points
+        self._genetic = genetic
 
     @abstractmethod
     def run(self, chs: typing.List[chromosome.AbstractChromosome]) -> typing.List[chromosome.AbstractChromosome]:
         pass
-
-
-def _calc_arr_avg(num_arr: typing.Union[typing.List[int], typing.List[float]]) -> float:
-    arr_sum = 0
-    for num in num_arr:
-        arr_sum += num
-
-    return arr_sum / len(num_arr)
 
 
 class AverageFitnessSelection(Selection):
@@ -31,8 +26,9 @@ class AverageFitnessSelection(Selection):
 
     def run(self, chs: typing.List[chromosome.AbstractChromosome]) -> typing.List[chromosome.AbstractChromosome]:
         logging.info('Calculating fitness for average fitness selection...')
-        fitness_arr = [ch.calc_fitness(self._target) for ch in chs]
-        fitness_avg = _calc_arr_avg(fitness_arr)
+        self._genetic.calc_current_gen_fitness()
+        fitness_arr = self._genetic.get_current_gen_fitness()
+        fitness_avg = common.get_arr_avg(fitness_arr)
 
         new_gen = []
         fitness_arr_len = len(fitness_arr)

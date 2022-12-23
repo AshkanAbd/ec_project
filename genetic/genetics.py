@@ -21,7 +21,10 @@ class AbstractGeneticAlgorithm:
     _mutation_op: mutation.Mutation
     _replacement_op: replacement.Replacement
     _preserved: chromosome.AbstractChromosome = None
+    _preserved_fitness: float = None
     _targets: typing.List[Phenotype] = []
+    _current_gen_fitness: typing.List[float] = []
+    _fitness_counter = 0
 
     def __init__(
             self,
@@ -40,6 +43,16 @@ class AbstractGeneticAlgorithm:
 
     def get_generation_counter(self) -> int:
         return self._generation_counter
+
+    def get_fitness_counter(self) -> int:
+        return self._fitness_counter
+
+    def calc_current_gen_fitness(self):
+        self._current_gen_fitness = [ch.calc_fitness(self._targets) for ch in self._current_generation]
+        self._fitness_counter += len(self._current_gen_fitness)
+
+    def get_current_gen_fitness(self) -> typing.List[float]:
+        return self._current_gen_fitness
 
     @abstractmethod
     def set_target_points(self, points: typing.List[Phenotype]):
@@ -93,8 +106,10 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
 
     def set_target_points(self, points: typing.List[Phenotype]):
         self._targets = points
-        self._selection_op.setup(self._targets)
-        self._replacement_op.setup(self._targets)
+        self._selection_op.setup(self._targets, self)
+        self._crossover_op.setup(self)
+        self._mutation_op.setup(self)
+        self._replacement_op.setup(self._targets, self)
 
     def current_generation_to_phenotype(self) -> typing.List[Phenotype]:
         return [ch.to_phenotype() for ch in self._current_generation]
@@ -118,11 +133,6 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
     def run_selection_op(self):
         self._middle_generation = self._selection_op.run(self._current_generation)
 
-        self._update_preserved(
-            self._middle_generation,
-            [ch.calc_fitness(self._targets) for ch in self._middle_generation]
-        )
-
     def run_crossover_op(self):
         new_mid_gen = []
         mid_gen_len = len(self._middle_generation)
@@ -141,10 +151,6 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             new_mid_gen.append(crossover_res[1])
 
         self._middle_generation = new_mid_gen
-        self._update_preserved(
-            self._middle_generation,
-            [ch.calc_fitness(self._targets) for ch in self._middle_generation]
-        )
 
     def run_mutation_op(self):
         new_mid_gen = []
@@ -156,33 +162,27 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             new_mid_gen.append(self._mutation_op.run(ch))
 
         self._middle_generation = new_mid_gen
-        self._update_preserved(
-            self._middle_generation,
-            [ch.calc_fitness(self._targets) for ch in self._middle_generation]
-        )
 
     def run_replacement_op(self):
         self._current_generation = self._replacement_op.run(
             self._current_generation,
             self._middle_generation
         )
-        self._update_preserved(
-            self._current_generation,
-            [ch.calc_fitness(self._targets) for ch in self._current_generation]
-        )
+        self._update_preserved()
 
-    def _update_preserved(
-            self,
-            gen: typing.List[chromosome.AbstractChromosome],
-            gen_fitness: typing.List[float],
-    ):
+    def _update_preserved(self):
         logging.info('Looking for new best chromosome...')
-        gen_len = len(gen)
+        gen_len = len(self._current_generation)
         gen_best = 0
         for i in range(1, gen_len):
-            if gen_fitness[i] < gen_fitness[gen_best]:
+            if self._current_gen_fitness[i] < self._current_gen_fitness[gen_best]:
                 gen_best = i
 
-        if self._preserved is None or self._preserved.calc_fitness(self._targets) > gen_fitness[gen_best]:
-            self._preserved = gen[gen_best]
-            logging.info('Updating best chromosome to %s.', self._preserved.get_value())
+        if self._preserved is None or self._preserved_fitness > self._current_gen_fitness[gen_best]:
+            self._preserved = self._current_generation[gen_best]
+            self._preserved_fitness = self._current_gen_fitness[gen_best]
+            logging.info(
+                'Updating best chromosome to %s with %s fitness.',
+                self._preserved.get_value(),
+                self._preserved_fitness
+            )

@@ -3,10 +3,6 @@ import common
 from center_finder import CenterFinder
 from genetic.genetics import GeneticAlgorithm
 import input.input_source
-import genetic.op.crossover as crossover
-import genetic.op.mutation as mutation
-import genetic.op.selection as selection
-import genetic.op.replacement as replacement
 import config
 
 logging.getLogger().setLevel(logging.INFO)
@@ -14,11 +10,14 @@ in_source = input.input_source.TxtFileInput("./sample.txt")
 finder = CenterFinder(
     in_source,
     GeneticAlgorithm(
-        selection.AverageFitnessSelection(),
-        crossover.StrNptCrossover(config.N_PTS_CROSSOVER),
-        mutation.StrBitFlippingMutation(),
-        replacement.AlphaGenerationalReplacement(config.ALPHA_REPLACEMENT),
+        config.SELECTION_OP,
+        config.CROSSOVER_OP,
+        config.MUTATION_OP,
+        config.REPLACEMENT_OP,
     ),
+)
+finder.set_limit_checker(
+    config.LIMIT_FUNC
 )
 
 common.print_active_config()
@@ -29,10 +28,10 @@ if config.DRAW_GENERATION_POINTS:
     finder.draw_current_points([[0, 1, 0]])
 
 while True:
-    print(f'------------------------------ GENERATION {finder.get_limit() + 1} ------------------------------')
+    print(f'------------------------------ GENERATION {finder.get_generation() + 1} ------------------------------')
     finder.run_cycle()
     end_flag, res_point = finder.check_end_condition()
-    if finder.get_limit() == config.MAX_GENERATION or end_flag:
+    if finder.get_limit() == config.MAX_LIMIT or end_flag:
         print('Algorithm reached to maximum possible generation.')
         finder.clear_current_points()
         break

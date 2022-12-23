@@ -9,9 +9,11 @@ import math
 
 class Replacement:
     _targets: typing.List[Phenotype] = []
+    _genetic = None
 
-    def setup(self, target_points: typing.List[Phenotype]):
+    def setup(self, target_points: typing.List[Phenotype], genetic):
         self._targets = target_points
+        self._genetic = genetic
 
     @abstractmethod
     def run(
@@ -43,7 +45,7 @@ class AlphaGenerationalReplacement(Replacement):
         mid_gen_len = len(mid_gen)
 
         logging.info('Calculating fitness for alpha generational replacement...')
-        old_gen_fitness = [ch.calc_fitness(self._targets) for ch in old_gen]
+        old_gen_fitness = self._genetic.get_current_gen_fitness()
         mid_gen_fitness = [ch.calc_fitness(self._targets) for ch in mid_gen]
 
         new_gen = [x for x in old_gen]

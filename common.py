@@ -28,9 +28,7 @@ def print_active_config():
     print('LOWER_BOUND', config.LOWER_BOUND)
     print('UPPER_BOUND', config.UPPER_BOUND)
     print('TARGET_TOLERANCE', config.TARGET_TOLERANCE)
-    print('MAX_GENERATION', config.MAX_GENERATION)
-    print('ALPHA_REPLACEMENT', config.ALPHA_REPLACEMENT)
-    print('N_PTS_CROSSOVER', config.N_PTS_CROSSOVER)
+    print('MAX_LIMIT', config.MAX_LIMIT)
 
 
 def ui_tick():
@@ -135,3 +133,11 @@ def calibrate(points: typing.List[Point]):
         config.TARGET_TOLERANCE = 0.001
 
     _CALIBRATED = True
+
+
+def get_arr_avg(num_arr: typing.Union[typing.List[int], typing.List[float]]) -> float:
+    arr_sum = 0
+    for num in num_arr:
+        arr_sum += num
+
+    return arr_sum / len(num_arr)
