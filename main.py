@@ -22,10 +22,10 @@ finder.set_limit_checker(
 
 common.print_active_config()
 
-finder.draw_target_points([[1, 0, 0]])
+finder.draw_target_points([config.TARGET_COLOR])
 end_flag, res_point = finder.check_end_condition()
 if config.DRAW_GENERATION_POINTS:
-    finder.draw_current_points([[0, 1, 0]])
+    finder.draw_current_points([config.GEN_COLOR])
 
 while True:
     print(f'------------------------------ GENERATION {finder.get_generation() + 1} ------------------------------')
@@ -36,7 +36,7 @@ while True:
         finder.clear_current_points()
         break
 
-finder.draw_best([[0, 0, 1]])
+finder.draw_best([config.SOLUTION_COLOR])
 best_point = finder.get_best()
 print('Best point:', best_point.to_arr())
 print('Best point fitness:', finder.get_best_in_genotype().calc_fitness(finder._target_points))

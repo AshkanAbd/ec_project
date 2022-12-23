@@ -76,8 +76,8 @@ class AdaptiveCrossover(Crossover):
             self._pre_gen = -1
             return True
 
-        if self._pre_gen + 2 == self._genetic.get_generation_counter():
-            self._pre_gen += 1
+        if self._pre_gen + 2 <= self._genetic.get_generation_counter():
+            self._pre_gen = self._genetic.get_generation_counter() - 1
             return True
 
         return False

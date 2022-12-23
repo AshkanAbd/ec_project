@@ -113,29 +113,29 @@ class CenterFinder:
     def run_cycle(self):
         self._genetic.run_selection_op()
         if config.DRAW_MUDDLE_POINTS:
-            self.draw_middle_points([[0, 1, 1]])
+            self.draw_middle_points([config.SELECTION_COLOR])
         # input('Enter to continue...')
         self._genetic.run_crossover_op()
         if config.DRAW_MUDDLE_POINTS:
             self.clear_middle_points()
-            self.draw_middle_points([[1, 0, 1]])
+            self.draw_middle_points([config.CROSSOVER_COLOR])
         # input('Enter to continue...')
         self._genetic.run_mutation_op()
         if config.DRAW_MUDDLE_POINTS:
             self.clear_middle_points()
-            self.draw_middle_points([[0, 0.5, 0.5]])
+            self.draw_middle_points([config.MUTATION_COLOR])
         # input('Enter to continue...')
         self._genetic.run_replacement_op()
         # input('Enter to continue...')
         if config.DRAW_GENERATION_POINTS:
             self.clear_current_points()
-            self.draw_current_points([[0, 1, 0]])
+            self.draw_current_points([config.GEN_COLOR])
         # input('Enter to continue...')
         if config.DRAW_MUDDLE_POINTS:
             self.clear_middle_points()
         self._genetic.increase_generation_counter()
         if config.DRAW_BEST_POINT:
-            self.draw_best([[0, 0, 1]])
+            self.draw_best([config.SOLUTION_COLOR])
 
     def get_limit(self) -> int:
         return self._limit_checker(self._genetic)
