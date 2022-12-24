@@ -26,8 +26,9 @@ class Replacement:
 
 class AlphaGenerationalReplacement(Replacement):
     _alpha: float
+    _elitism: bool
 
-    def __init__(self, alpha: float):
+    def __init__(self, alpha: float, elitism: bool):
         logging.info('Initializing alpha generational replacement...')
         if alpha <= 0 or alpha > 1:
             logging.error('Alpha should be in (0, 1] range.')
@@ -35,6 +36,7 @@ class AlphaGenerationalReplacement(Replacement):
             alpha = 0.5
 
         self._alpha = alpha
+        self._elitism = elitism
 
     def run(
             self,
@@ -69,12 +71,14 @@ class AlphaGenerationalReplacement(Replacement):
 
             transferred.add(mid_gen_best)
             if len(updated) == 0:
-                new_gen.append(mid_gen[mid_gen_best])
-                continue
+                break
             random.shuffle(updated)
 
-            if old_gen_fitness[updated[0]] > mid_gen_fitness[mid_gen_best]:
+            if not self._elitism:
                 new_gen[updated[0]] = mid_gen[mid_gen_best]
+            else:
+                if old_gen_fitness[updated[0]] > mid_gen_fitness[mid_gen_best]:
+                    new_gen[updated[0]] = mid_gen[mid_gen_best]
             updated = updated[1:]
 
         logging.info('Replacement was successful, generation len: %s', len(new_gen))

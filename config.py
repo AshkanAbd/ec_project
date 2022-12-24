@@ -29,7 +29,7 @@ TARGET_TOLERANCE = 0.01
 SELECTION_OP = genetic.selection.AverageFitnessSelection()
 CROSSOVER_OP = genetic.crossover.AdaptiveCrossover()
 MUTATION_OP = genetic.mutation.StrBitFlippingMutation()
-REPLACEMENT_OP = genetic.replacement.AlphaGenerationalReplacement(0.1)
+REPLACEMENT_OP = genetic.replacement.AlphaGenerationalReplacement(alpha=0.0001, elitism=False)
 MID_GEN_STRATEGY = genetic.strategy.AdaptiveMutationStrategy()
 
 # -------------- OPTIONAL GENETIC CONFIG -------------- #
