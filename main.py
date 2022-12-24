@@ -14,6 +14,7 @@ finder = CenterFinder(
         config.CROSSOVER_OP,
         config.MUTATION_OP,
         config.REPLACEMENT_OP,
+        config.MID_GEN_STRATEGY,
     ),
 )
 finder.set_limit_checker(

@@ -30,6 +30,7 @@ SELECTION_OP = genetic.selection.AverageFitnessSelection()
 CROSSOVER_OP = genetic.crossover.AdaptiveCrossover()
 MUTATION_OP = genetic.mutation.StrBitFlippingMutation()
 REPLACEMENT_OP = genetic.replacement.AlphaGenerationalReplacement(0.1)
+MID_GEN_STRATEGY = genetic.strategy.AdaptiveMutationStrategy()
 
 # -------------- OPTIONAL GENETIC CONFIG -------------- #
 DIMENSION = 2
