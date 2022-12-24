@@ -24,7 +24,6 @@ finder.set_limit_checker(
 common.print_active_config()
 
 finder.draw_target_points([config.TARGET_COLOR])
-end_flag, res_point = finder.check_end_condition()
 if config.DRAW_GENERATION_POINTS:
     finder.draw_current_points([config.GEN_COLOR])
 

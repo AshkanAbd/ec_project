@@ -121,6 +121,8 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
                 chromosome.StrChromosome(chromosome_num)
             )
 
+        self.calc_current_gen_fitness()
+
     def check_end_condition(self) -> typing.Union[typing.Tuple[bool, Phenotype], typing.Tuple[bool, None]]:
         return False, None
 
@@ -155,6 +157,7 @@ class GeneticAlgorithm(AbstractGeneticAlgorithm):
             self._current_generation,
             self._mid_gen_strategy.pick_for_replacement()
         )
+        self.calc_current_gen_fitness()
         self._update_preserved()
 
     def _update_preserved(self):

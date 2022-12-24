@@ -26,7 +26,6 @@ class AverageFitnessSelection(Selection):
 
     def run(self, chs: typing.List[chromosome.AbstractChromosome]) -> typing.List[chromosome.AbstractChromosome]:
         logging.info('Calculating fitness for average fitness selection...')
-        self._genetic.calc_current_gen_fitness()
         fitness_arr = self._genetic.get_current_gen_fitness()
         fitness_avg = common.get_arr_avg(fitness_arr)
 
