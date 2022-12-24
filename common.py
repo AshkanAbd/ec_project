@@ -111,8 +111,8 @@ def calibrate(points: typing.List[Point]):
     for i in range(dimension):
         l_bound = find_min(points_arr, i)
         u_bound = find_max(points_arr, i)
-        l_bound -= l_bound / 10 * 2
-        u_bound += u_bound / 10 * 2
+        l_bound -= (l_bound * config.LOWER_BOUND_TOLERANCE)
+        u_bound += (u_bound * config.UPPER_BOUND_TOLERANCE)
         if calibrate_status[3]:
             config.LOWER_BOUND.append(l_bound)
         if calibrate_status[2]:
