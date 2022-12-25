@@ -26,10 +26,10 @@ MAX_LIMIT = 20 * 60
 TARGET_TOLERANCE = 0.01
 
 # -------------- GENETIC OPERATORS CONFIG -------------- #
-SELECTION_OP = genetic.selection.AverageFitnessSelection()
+SELECTION_OP = genetic.selection.FPSSelection()
 CROSSOVER_OP = genetic.crossover.AdaptiveCrossover()
 MUTATION_OP = genetic.mutation.StrBitFlippingMutation()
-REPLACEMENT_OP = genetic.replacement.AlphaGenerationalReplacement(alpha=0.0001, elitism=False)
+REPLACEMENT_OP = genetic.replacement.AlphaGenerationalReplacement(alpha=0.1, elitism=True)
 MID_GEN_STRATEGY = genetic.strategy.AdaptiveMutationStrategy()
 
 # -------------- OPTIONAL GENETIC CONFIG -------------- #

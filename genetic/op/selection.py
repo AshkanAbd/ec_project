@@ -20,7 +20,7 @@ class Selection:
         pass
 
 
-class AverageFitnessSelection(Selection):
+class FPSSelection(Selection):
     def __init__(self):
         logging.info('AverageFitness selection initialized')
 
